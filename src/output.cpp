@@ -1,3 +1,4 @@
+#include "./../include/output.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -192,5 +193,20 @@ void printInstructions(){
     cout << "\n";
     printBar("Type 'instructions' at any time to see this screen again.",
              BG_BLUE + FG_WHITE + BOLD);
+    cout << "\n";
+}
+
+
+void printExitMessage(){
+    cout << "\n\n";
+    printBar("Thank you for using the Relief Supply Distribution System.",
+             BG_BLUE + FG_WHITE + BOLD);
+    cout << "\n";
+}
+
+void invalidCommandMessage(){
+    cout << "\n";
+    printBar("Invalid command. Type 'instructions' to see the list of commands.",
+             BG_YELLOW + FG_BLACK + BOLD);
     cout << "\n";
 }
