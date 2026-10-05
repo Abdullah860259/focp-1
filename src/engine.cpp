@@ -259,6 +259,27 @@ string packageCost(Action action){
          + countOf(PACKAGES[action].medicineKitsNeeded, "medicine kit");
 }
 
+// Adds "name (need X, have Y)" to the list, but only if we are short of it
+void addShortage(string &list, string name, int need, int have){
+    if (have >= need)
+        return;
+    if (list != "")
+        list += ", ";
+    list += name + " (need " + to_string(need) + ", have " + to_string(have) + ")";
+}
+
+// Lists only the items that stop this package from being sent,
+// e.g. "packs (need 50, have 20), water bottles (need 100, have 40)"
+string missingItems(Action action){
+    string list = "";
+    addShortage(list, "trucks",        PACKAGES[action].trucksNeeded,       trucks);
+    addShortage(list, "packs",         PACKAGES[action].packsNeeded,        packs);
+    addShortage(list, "water bottles", PACKAGES[action].waterBottlesNeeded, waterBottles);
+    addShortage(list, "food packets",  PACKAGES[action].foodPacketsNeeded,  foodPackets);
+    addShortage(list, "medicine kits", PACKAGES[action].medicineKitsNeeded, medicineKits);
+    return list;
+}
+
 // Echo of everything the user typed, so they can check it at a glance
 void printRequestSummary(const HelpRequest &request){
     printHeading("REQUEST SUMMARY");
@@ -352,9 +373,7 @@ void getHelp(){
 
     // Try the recommended package; if stock is short, step down to the next smaller one
     while (relief != DEFER && !canAfford(relief)){
-        printCheck(false, PACKAGES[relief].name + "  - needs " + packageCost(relief)
-                          + ", only " + to_string(trucks) + " trucks, "
-                          + to_string(packs) + " packs left");
+        printCheck(false, PACKAGES[relief].name + "  - not enough " + missingItems(relief));
         relief = (relief == FULL_RELIEF)     ? STANDARD_RELIEF :
                  (relief == STANDARD_RELIEF) ? EMERGENCY_KIT :
                                                DEFER;
