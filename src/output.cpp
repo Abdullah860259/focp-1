@@ -1,4 +1,5 @@
 #include "./../include/output.h"
+#include "./../include/engine.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -14,7 +15,7 @@ using namespace std;
 // ======================= Display settings =======================
 int WIDTH = 64;          // updated to the terminal width at runtime
 const int MARGIN = 4;    // left/right indent for inner content
-const int CMD_W  = 13;   // width of the command "badge" column
+const int CMD_W  = 16;   // width of the command "badge" column (fits "show_inventory")
 
 // ======================= ANSI escape codes ======================
 const string RESET     = "\033[0m";
@@ -153,43 +154,57 @@ void printInstructions(){
 
     // ---------- Introduction ----------
     printHeading("INTRODUCTION");
-    printText("During a disaster, relief supplies such as food, water,");
-    printText("medicine and shelter kits are limited, and many areas");
-    printText("need them at once. This program keeps track of the");
-    printText("available stock and distributes it to affected areas.");
+    printText("After a disaster such as a flood, trucks and relief");
+    printText("supplies are limited, and many areas ask for help at");
+    printText("once. This program decides how much relief each area");
+    printText("should get, without running out of stock too quickly.");
     cout << "\n";
-    printText(BOLD + string("With this system you can:") + RESET);
-    printBullet("Request relief supplies for an area");
-    printBullet("View the supplies currently in stock");
-    printBullet("Add new supplies when donations arrive");
-    printBullet("Check the overall distribution status");
+    printText(BOLD + string("For every request the system:") + RESET);
+    printBullet("Asks a few questions about the affected area");
+    printBullet("Calculates a need score from the answers");
+    printBullet("Picks a relief package that matches the need");
+    printBullet("Sends a smaller package if stock is too low");
+    printBullet("Updates the stock and saves the request");
 
     // ---------- Commands ----------
     printHeading("COMMANDS");
     printTableHeader();
-    printCommand("help",         "Request relief supplies for an area", false);
-    printCommand("resources",    "Print all supplies and quantities",   true);
-    printCommand("add",          "Add more stock of a supply",          false);
-    printCommand("status",       "Show summary of distributions",       true);
-    printCommand("instructions", "Show this instructions screen",       false);
-    printCommand("quit",         "Exit the program",                    true);
+    printCommand("get_help",       "Request relief for an area",    false);
+    printCommand("show_inventory", "Show current stock levels",     true);
+    printCommand("instructions",   "Show this instructions screen", false);
+    printCommand("exit",           "Exit the program",              true);
+
+    // ---------- Relief packages ----------
+    // Names come straight from the PACKAGES table, so they always match the code
+    printHeading("RELIEF PACKAGES");
+    printText("From largest to smallest:");
+    for (int i = 0; i < PACKAGE_COUNT; i++)
+        printBullet(PACKAGES[i].name);
 
     // ---------- How to use ----------
     printHeading("HOW TO USE");
-    printStep(1, "Type a command at the  >  prompt and press Enter.");
-    printStep(2, "Answer the questions (supply, quantity, area).");
-    printStep(3, "Quantities must be positive whole numbers.");
-    printStep(4, "You cannot request more than what is in stock.");
+    printStep(1, "Type a command and press Enter.");
+    printStep(2, "Capital letters and spaces are ignored.");
+    printStep(3, "For get_help, answer each question.");
+    printStep(4, "Numbers must be whole and inside the range shown.");
+    printStep(5, "A wrong answer is simply asked again.");
 
     // ---------- Example ----------
     printHeading("EXAMPLE");
-    printTerminalLine("",                                FG_GREEN);
-    printTerminalLine("> help",                          FG_GREEN + BOLD);
-    printTerminalLine("  Enter supply name : Water",     FG_WHITE);
-    printTerminalLine("  Enter quantity    : 50",        FG_WHITE);
-    printTerminalLine("  Enter area name   : Muzaffarabad", FG_WHITE);
-    printTerminalLine("  Request approved!",             FG_YELLOW + BOLD);
-    printTerminalLine("",                                FG_GREEN);
+    printTerminalLine("",                                         FG_GREEN);
+    printTerminalLine("> get_help",                               FG_GREEN + BOLD);
+    printTerminalLine("  Area name: Riverside Village",           FG_WHITE);
+    printTerminalLine("  Damage level (low/medium/high): high",   FG_WHITE);
+    printTerminalLine("  Families affected (10-200): 150",        FG_WHITE);
+    printTerminalLine("  Access route (open/damaged): damaged",   FG_WHITE);
+    printTerminalLine("  Water scarcity (low/medium/high): high", FG_WHITE);
+    printTerminalLine("  Food availability (low/medium/high): low", FG_WHITE);
+    printTerminalLine("  Number of injured people (0-1000): 40",  FG_WHITE);
+    printTerminalLine("  Previous aid received (yes/no): no",     FG_WHITE);
+    printTerminalLine("",                                         FG_GREEN);
+    printTerminalLine("  Need score: 23 / 25",                    FG_YELLOW + BOLD);
+    printTerminalLine("  DISPATCHED: A. Full Relief",             FG_YELLOW + BOLD);
+    printTerminalLine("",                                         FG_GREEN);
 
     // ---------- Footer ----------
     cout << "\n";
