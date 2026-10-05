@@ -36,14 +36,17 @@ bool canAfford(Action action){
         && medicineKits >= PACKAGES[action].medicineKitsNeeded;
 }
 
-// Takes the package's trucks and packs out of stock.
+// Takes everything the package needs out of stock.
 // Refuses (returns false) instead of letting stock go below zero.
 bool dispatchPackage(Action action){
     if (!canAfford(action))
         return false;
 
-    trucks -= PACKAGES[action].trucksNeeded;
-    packs  -= PACKAGES[action].packsNeeded;
+    trucks       -= PACKAGES[action].trucksNeeded;
+    packs        -= PACKAGES[action].packsNeeded;
+    waterBottles -= PACKAGES[action].waterBottlesNeeded;
+    foodPackets  -= PACKAGES[action].foodPacketsNeeded;
+    medicineKits -= PACKAGES[action].medicineKitsNeeded;
     return true;
 }
 
