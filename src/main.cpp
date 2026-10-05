@@ -57,12 +57,6 @@ int main()
         case GET_HELP:
             getHelp();
             break;
-        case REMOVE_ITEM:
-            cout << "Remove item functionality not implemented yet." << endl;
-            break;
-        case UPDATE_ITEM:
-            cout << "Update item functionality not implemented yet." << endl;
-            break;
         case INSTRUCTIONS:
             printInstructions();
             break;

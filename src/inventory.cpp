@@ -7,9 +7,9 @@ using namespace std;
 
 int trucks = 20;
 int packs = 120;
-int waterBottles = 50;
-int foodPackets = 30;
-int medicineKits = 20;
+int waterBottles = 500;
+int foodPackets = 300;
+int medicineKits = 200;
 
 // ======================= Table layout ===========================
 const int INV_MARGIN = 4;    // left indent of the table

@@ -1,2 +1,16 @@
 Time,Area,Damage Level,Families Affected,Route,Distance (km),Water Scarcity,Food Availability,Injured People,Previous Aid
 2026-10-05 20:22:01,"a",Low,20,Open,20,Low,Low,20,No
+2026-10-05 21:40:11,"ade",Medium,40,Damaged,0,High,Low,500,No
+2026-10-05 21:41:14,"adf",High,160,Damaged,0,High,Low,999,No
+2026-10-05 22:09:47,"abc",Medium,60,Open,20,High,Low,999,No
+2026-10-05 22:14:33,"def",High,199,Damaged,0,High,Low,999,No
+2026-10-05 22:16:09,"def",High,199,Damaged,0,High,Low,199,No
+2026-10-05 22:22:42,"ar",High,199,Damaged,0,High,Low,999,No
+2026-10-05 22:23:45,"ar",High,199,Damaged,0,High,Low,99,No
+2026-10-05 22:32:10,"def",High,199,Damaged,0,High,High,999,No
+2026-10-05 22:34:04,"d",High,199,Damaged,0,High,Low,999,No
+2026-10-05 22:39:14,"de",High,199,Damaged,0,High,Low,999,No
+2026-10-05 22:42:11,"de",High,199,Damaged,0,High,High,999,Yes
+2026-10-05 22:43:04,"de",High,199,Damaged,0,High,Low,999,No
+2026-10-05 22:44:02,"de",High,199,Damaged,0,High,Low,299,No
+2026-10-05 22:56:28,"ade",High,99,Damaged,0,Low,High,4,Yes

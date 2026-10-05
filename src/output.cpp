@@ -26,6 +26,7 @@ const string FG_WHITE  = "\033[97m";
 const string FG_CYAN   = "\033[96m";
 const string FG_GREEN  = "\033[92m";
 const string FG_YELLOW = "\033[93m";
+const string FG_RED    = "\033[91m";
 
 const string BG_BLUE   = "\033[44m";
 const string BG_CYAN   = "\033[46m";
@@ -33,6 +34,7 @@ const string BG_YELLOW = "\033[43m";
 const string BG_GREEN  = "\033[42m";
 const string BG_GRAY   = "\033[100m";
 const string BG_BLACK  = "\033[40m";
+const string BG_RED    = "\033[41m";
 
 // ======================= System helpers =========================
 
