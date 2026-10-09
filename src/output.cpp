@@ -169,10 +169,10 @@ void printInstructions(){
     printTableHeader();
     printCommand("help",         "Request relief supplies for an area", false);
     printCommand("resources",    "Print all supplies and quantities",   true);
-    printCommand("add",          "Add more stock of a supply",          false);
+    printCommand("update",          "Add more stock of a supply",          false);
     printCommand("status",       "Show summary of distributions",       true);
     printCommand("instructions", "Show this instructions screen",       false);
-    printCommand("quit",         "Exit the program",                    true);
+    printCommand("exit",         "Exit the program",                    true);
 
     // ---------- How to use ----------
     printHeading("HOW TO USE");
