@@ -398,7 +398,7 @@ void getHelp(){
         if (recommended == DEFER)
             printText("Reason: the need score is too low for a relief package right now.");
         else
-            printText("Reason: not enough trucks or supply packs left for any package.");
+            printText("Reason: not enough stock left for any package.");
     }
     else{
         printBar("DISPATCHED:  " + PACKAGES[relief].name, BG_GREEN + FG_BLACK + BOLD);

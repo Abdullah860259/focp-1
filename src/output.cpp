@@ -169,28 +169,33 @@ void printInstructions(){
     printTableHeader();
     printCommand("help",         "Request relief supplies for an area", false);
     printCommand("resources",    "Print all supplies and quantities",   true);
-    printCommand("update",          "Add more stock of a supply",          false);
+    printCommand("update",          "Add more stock of a supply",       false);
     printCommand("status",       "Show summary of distributions",       true);
     printCommand("instructions", "Show this instructions screen",       false);
     printCommand("exit",         "Exit the program",                    true);
 
     // ---------- How to use ----------
     printHeading("HOW TO USE");
-    printStep(1, "Type a command at the  >  prompt and press Enter.");
-    printStep(2, "Answer the questions (supply, quantity, area).");
-    printStep(3, "Quantities must be positive whole numbers.");
+    printStep(1, "Type a command and press Enter.");
+    printStep(2, "Answer the questions about the affected area (area, damage level, etc)");
+    printStep(3, "Quantities must be either zero or positive integers.");
     printStep(4, "You cannot request more than what is in stock.");
 
     // ---------- Example ----------
     printHeading("EXAMPLE");
-    printTerminalLine("",                                FG_GREEN);
-    printTerminalLine("> help",                          FG_GREEN + BOLD);
-    printTerminalLine("  Enter supply name : Water",     FG_WHITE);
-    printTerminalLine("  Enter quantity    : 50",        FG_WHITE);
-    printTerminalLine("  Enter area name   : Muzaffarabad", FG_WHITE);
-    printTerminalLine("  Request approved!",             FG_YELLOW + BOLD);
-    printTerminalLine("",                                FG_GREEN);
-
+    printTerminalLine("",                                           FG_GREEN);
+     printTerminalLine("Enter a command: help",                     FG_GREEN + BOLD);
+    printTerminalLine("  Area name : Muzaffarabad",                 FG_WHITE);
+    printTerminalLine("  Damage level (low/medium/high) : high",    FG_WHITE);
+    printTerminalLine("  Families affected (10-200) : 150",     m   FG_WHITE);
+    printTerminalLine("  Access route (open/damaged): open",        FG_WHITE);
+    printTerminalLine("  Distance to the area in km (1-500): 80",   FG_WHITE);
+    printTerminalLine("  Water scarcity (low/medium/high): high",   FG_WHITE);
+    printTerminalLine("  Food availability (low/medium/high): low", FG_WHITE);
+    printTerminalLine("  Number of injured people (0-1000): 120",   FG_WHITE);
+    printTerminalLine("  Previous aid received (yes/no): no",       FG_WHITE);
+    printTerminalLine("  DISPATCHED: A. Full Relief",               FG_YELLOW + BOLD);
+    printTerminalLine("",                                           FG_GREEN);
     // ---------- Footer ----------
     cout << "\n";
     printBar("Type 'instructions' at any time to see this screen again.",
