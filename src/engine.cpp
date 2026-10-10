@@ -379,6 +379,9 @@ void getHelp(){
                                                DEFER;
     }
     dispatchPackage(relief);
+    if (relief == DEFER) requestsDeferred++;
+    else                 requestsServed++;
+
     if (relief != DEFER)
         printCheck(true, PACKAGES[relief].name + "  - " + packageCost(relief) + " sent");
 
@@ -409,4 +412,59 @@ void getHelp(){
         }
     }
     cout << "\n";
+}
+
+// ======================= Admin password =========================
+const string ADMIN_PASSWORD = "admin@123";   // password
+const int MAX_PASSWORD_TRIES = 3;
+
+// Asks for the admin password. Returns true if it is correct.
+// User gets a few tries, if wrong every time then is locked out of this command.
+bool askAdminPassword() {
+    string attempt;
+    for (int tries = 1; tries <= MAX_PASSWORD_TRIES; tries++) {
+	  cout << "    Admin password: ";
+	  getline(cin, attempt);
+	  if (attempt == ADMIN_PASSWORD)
+		return true;
+	  printInputError("Wrong password (" + to_string(tries) + " of " + to_string(MAX_PASSWORD_TRIES) + ").");
+    }
+    cout << "\n";
+    printBar("ACCESS DENIED", BG_RED + FG_WHITE + BOLD);
+    return false;
+}
+
+// Adds or removes stock by hand (donations, losses, corrections)
+void addStock() {
+    cout << "\n";
+    if (!askAdminPassword())
+	  return;
+    cout << "\n";
+    printBar("Update Stock", BG_BLUE + FG_WHITE + BOLD);
+    cout << "\n";
+    printText("1. Trucks");
+    printText("2. Supply packs");
+    printText("3. Water bottles");
+    printText("4. Food packets");
+    printText("5. Medicine kits");
+    cout << "\n";
+
+    int item = askNumber("Which item", 1, 5);
+    bool add = askTwoChoice("Add or remove", "add", "remove");
+    int amount = askNumber("How many", 1, 1000);
+    if (!add)
+	  amount = -amount;
+
+    int* stock = (item == 1) ? &trucks :
+	  (item == 2) ? &packs :
+	  (item == 3) ? &waterBottles :
+	  (item == 4) ? &foodPackets :
+	  &medicineKits;
+
+    if (*stock + amount < 0) {
+	  printInputError("Cannot remove more than you have (" + to_string(*stock) + " in stock).");
+	  return;
+    }
+    *stock += amount;
+    showInventory();
 }

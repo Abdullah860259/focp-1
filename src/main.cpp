@@ -60,6 +60,12 @@ int main()
         case INSTRUCTIONS:
             printInstructions();
             break;
+	  case STATUS:
+		showStatus();
+		break;
+	  case UPDATE:
+		addStock();
+		break;
         case INVALID_COMMAND:
             invalidCommandMessage();
             break;

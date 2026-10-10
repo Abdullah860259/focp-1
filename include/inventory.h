@@ -7,5 +7,8 @@ extern int packs;
 extern int waterBottles;
 extern int foodPackets;
 extern int medicineKits;
+extern int requestsServed;
+extern int requestsDeferred;
 
+void showStatus();
 void showInventory();

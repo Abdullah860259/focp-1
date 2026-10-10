@@ -169,7 +169,7 @@ void printInstructions(){
     printTableHeader();
     printCommand("help",         "Request relief supplies for an area", false);
     printCommand("resources",    "Print all supplies and quantities",   true);
-    printCommand("update",          "Add more stock of a supply",       false);
+    printCommand("update",       "Manage stock - add or remove stocks (admin only)",       false);
     printCommand("status",       "Show summary of distributions",       true);
     printCommand("instructions", "Show this instructions screen",       false);
     printCommand("exit",         "Exit the program",                    true);
@@ -187,7 +187,7 @@ void printInstructions(){
      printTerminalLine("Enter a command: help",                     FG_GREEN + BOLD);
     printTerminalLine("  Area name : Muzaffarabad",                 FG_WHITE);
     printTerminalLine("  Damage level (low/medium/high) : high",    FG_WHITE);
-    printTerminalLine("  Families affected (10-200) : 150",     m   FG_WHITE);
+    printTerminalLine("  Families affected (10-200) : 150",         FG_WHITE);
     printTerminalLine("  Access route (open/damaged): open",        FG_WHITE);
     printTerminalLine("  Distance to the area in km (1-500): 80",   FG_WHITE);
     printTerminalLine("  Water scarcity (low/medium/high): high",   FG_WHITE);
