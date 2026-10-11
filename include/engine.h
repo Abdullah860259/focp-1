@@ -53,5 +53,4 @@ int calculateNeedScore(const HelpRequest &request);
 void saveRequest(const HelpRequest &request);
 void getHelp();
 void addStock();
-bool confirmExit();
 HelpRequest takeInputs();

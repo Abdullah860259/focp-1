@@ -41,17 +41,15 @@ int main()
     string input;
     while (true)
     {
-	  cout << "\n  " << FG_GREEN << BOLD << "Enter a command (or 'exit' to quit): " << RESET;
+        cout << "\n\nEnter a command (or 'exit' to quit): ";
         getline(cin, input);
         string cleanInputStr = cleanInput(input);
+        cout << "You entered: " << input << endl;
         switch (tocommands(cleanInputStr))
         {
         case EXIT:
-		if (confirmExit()) // If confirmExit is true
-		{
-		    printExitMessage();
-		    return 0;
-		}
+            printExitMessage();
+            return 0;
             break;
         case RESOURCES:
             showInventory();
