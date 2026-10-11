@@ -12,3 +12,4 @@ extern int requestsDeferred;
 
 void showStatus();
 void showInventory();
+void showSummaryStats();
