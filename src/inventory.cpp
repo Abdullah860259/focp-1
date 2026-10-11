@@ -64,3 +64,15 @@ void showStatus() {
     printInventoryRow("Requests deferred", requestsDeferred, true);
     cout << "\n";
 }
+void showSummaryStats() {
+    cout << "\n\n";
+    printBar("Inventory Summary Stats", BG_BLUE + FG_WHITE + BOLD);
+    cout << "\n";
+    cout << "Total Item Types Tracked: 5\n";
+    cout << "Trucks Available: " << trucks << "\n";
+    cout << "Supply Packs Available: " << packs << "\n";
+    cout << "Water Bottles Available: " << waterBottles << "\n";
+    cout << "Food Packets Available: " << foodPackets << "\n";
+    cout << "Medicine Kits Available: " << medicineKits << "\n";
+    cout << "\n";
+}
