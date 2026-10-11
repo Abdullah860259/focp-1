@@ -12,9 +12,9 @@ Built for **CS 110: Fundamentals of Computer Programming, Assignment 1** (NUST S
 
 | Name | Contribution |
 |---|---|
-| Abdullah Anwar | _TODO: e.g. program structure, input engine, dispatch logic_ |
-| Hooria | _TODO_: e.g.  Implemented Inventory Summary , Relief Request History , command routing in main.cpp, and updated instructions in output.cpp. |
-| Abeera | _TODO_: e.g. |
+| Abdullah Anwar | _TODO: e.g. program structure, input engine, dispatch logic, Developed core engine architecture, and overall control flow. |
+| Hooria | _TODO_: e.g. Implemented Inventory Summary , Relief Request History , command routing in main.cpp, and updated instructions in output.cpp., Compiled the Assignment |
+| Abeera | _TODO_: e.g. Flowcharts, Status and Update features, Output layout, Need score|
 
 > **TODO:** Fill in who did what. The rubric checks that this matches the commit history, and each member must be able to explain the whole program in the viva.
 
