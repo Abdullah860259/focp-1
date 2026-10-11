@@ -13,7 +13,7 @@ const int MIN_FAMILIES = 10;
 const int MAX_FAMILIES = 200;
 const int MIN_DISTANCE = 1;      // km
 const int MAX_DISTANCE = 500;    // km
-const int MAX_INJURED  = 1000;
+const int MAX_INJURED = 1000;
 
 // ======================= Relief packages ========================
 
@@ -28,24 +28,24 @@ const ReliefPackage PACKAGES[PACKAGE_COUNT] = {
 };
 
 // True if there is enough of EVERY item
-bool canAfford(Action action){
+bool canAfford(Action action) {
     return trucks >= PACKAGES[action].trucksNeeded
-        && packs  >= PACKAGES[action].packsNeeded
-        && waterBottles >= PACKAGES[action].waterBottlesNeeded
-        && foodPackets >= PACKAGES[action].foodPacketsNeeded
-        && medicineKits >= PACKAGES[action].medicineKitsNeeded;
+	  && packs >= PACKAGES[action].packsNeeded
+	  && waterBottles >= PACKAGES[action].waterBottlesNeeded
+	  && foodPackets >= PACKAGES[action].foodPacketsNeeded
+	  && medicineKits >= PACKAGES[action].medicineKitsNeeded;
 }
 
 // Takes everything the package needs out of stock.
 // Refuses (returns false) instead of letting stock go below zero.
-bool dispatchPackage(Action action){
+bool dispatchPackage(Action action) {
     if (!canAfford(action))
-        return false;
+	  return false;
 
-    trucks       -= PACKAGES[action].trucksNeeded;
-    packs        -= PACKAGES[action].packsNeeded;
+    trucks -= PACKAGES[action].trucksNeeded;
+    packs -= PACKAGES[action].packsNeeded;
     waterBottles -= PACKAGES[action].waterBottlesNeeded;
-    foodPackets  -= PACKAGES[action].foodPacketsNeeded;
+    foodPackets -= PACKAGES[action].foodPacketsNeeded;
     medicineKits -= PACKAGES[action].medicineKitsNeeded;
     return true;
 }
@@ -53,113 +53,113 @@ bool dispatchPackage(Action action){
 // ======================= Generic input helpers ==================
 
 // Prints an error line in yellow so it stands out from normal text
-void printInputError(string message){
+void printInputError(string message) {
     cout << "    " << FG_YELLOW << BOLD << "! " << message << RESET << "\n";
 }
 
 // Asks for free text and repeats until the answer is not empty
-string askText(string question){
+string askText(string question) {
     string answer;
-    while (true){
-        cout << "    " << question << ": ";
-        getline(cin, answer);
-        if (cleanInput(answer) != "")
-            return answer;
-        printInputError("This cannot be left empty.");
+    while (true) {
+	  cout << "    " << question << ": ";
+	  getline(cin, answer);
+	  if (cleanInput(answer) != "")
+		return answer;
+	  printInputError("This cannot be left empty.");
     }
 }
 
 // Asks for a whole number and repeats until it is between min and max.
 // Converted by hand (digit by digit) so letters, signs or decimals are rejected.
-int askNumber(string question, int min, int max){
+int askNumber(string question, int min, int max) {
     string answer;
-    while (true){
-        cout << "    " << question << " (" << min << "-" << max << "): ";
-        getline(cin, answer);
-        answer = cleanInput(answer);
+    while (true) {
+	  cout << "    " << question << " (" << min << "-" << max << "): ";
+	  getline(cin, answer);
+	  answer = cleanInput(answer);
 
-        bool valid = (answer != "" && answer.length() <= 6);
-        int value = 0;
-        for (int i = 0; valid && i < (int)answer.length(); i++){
-            if (answer[i] < '0' || answer[i] > '9')
-                valid = false;
-            else
-                value = value * 10 + (answer[i] - '0');
-        }
+	  bool valid = (answer != "" && answer.length() <= 6);
+	  int value = 0;
+	  for (int i = 0; valid && i < (int)answer.length(); i++) {
+		if (answer[i] < '0' || answer[i] > '9')
+		    valid = false;
+		else
+		    value = value * 10 + (answer[i] - '0');
+	  }
 
-        if (valid && value >= min && value <= max)
-            return value;
-        printInputError("Please enter a whole number from " + to_string(min)
-                        + " to " + to_string(max) + ".");
+	  if (valid && value >= min && value <= max)
+		return value;
+	  printInputError("Please enter a whole number from " + to_string(min)
+		+ " to " + to_string(max) + ".");
     }
 }
 
 // Asks the user to pick one of two answers; returns true for the first one.
 // Typing just the first letter also works (e.g. "y" for "yes").
-bool askTwoChoice(string question, string first, string second){
+bool askTwoChoice(string question, string first, string second) {
     string answer;
-    while (true){
-        cout << "    " << question << " (" << first << "/" << second << "): ";
-        getline(cin, answer);
-        answer = cleanInput(answer);
+    while (true) {
+	  cout << "    " << question << " (" << first << "/" << second << "): ";
+	  getline(cin, answer);
+	  answer = cleanInput(answer);
 
-        if (answer == first  || answer == first.substr(0, 1))
-            return true;
-        if (answer == second || answer == second.substr(0, 1))
-            return false;
-        printInputError("Please type '" + first + "' or '" + second + "'.");
+	  if (answer == first || answer == first.substr(0, 1))
+		return true;
+	  if (answer == second || answer == second.substr(0, 1))
+		return false;
+	  printInputError("Please type '" + first + "' or '" + second + "'.");
     }
 }
 
-bool askYesNo(string question){
+bool askYesNo(string question) {
     return askTwoChoice(question, "yes", "no");
 }
 
 // Asks for low / medium / high (or l / m / h)
-Level askLevel(string question){
+Level askLevel(string question) {
     string answer;
-    while (true){
-        cout << "    " << question << " (low/medium/high): ";
-        getline(cin, answer);
-        answer = cleanInput(answer);
+    while (true) {
+	  cout << "    " << question << " (low/medium/high): ";
+	  getline(cin, answer);
+	  answer = cleanInput(answer);
 
-        if (answer == "low"    || answer == "l") return LOW;
-        if (answer == "medium" || answer == "m") return MEDIUM;
-        if (answer == "high"   || answer == "h") return HIGH;
-        printInputError("Please type 'low', 'medium' or 'high'.");
+	  if (answer == "low" || answer == "l") return LOW;
+	  if (answer == "medium" || answer == "m") return MEDIUM;
+	  if (answer == "high" || answer == "h") return HIGH;
+	  printInputError("Please type 'low', 'medium' or 'high'.");
     }
 }
 
 // ======================= Request input ==========================
 
-HelpRequest takeInputs(){
+HelpRequest takeInputs() {
     HelpRequest request;
 
     cout << "\n";
     printBar("New Relief Request", BG_BLUE + FG_WHITE + BOLD);
     cout << "\n";
 
-    request.areaName         = askText("Area name");
-    request.damageLevel      = askLevel("Damage level");
+    request.areaName = askText("Area name");
+    request.damageLevel = askLevel("Damage level");
     request.familiesAffected = askNumber("Families affected", MIN_FAMILIES, MAX_FAMILIES);
 
     request.routeOpen = askTwoChoice("Access route", "open", "damaged");
     if (request.routeOpen)
-        request.distanceKm = askNumber("Distance to the area in km", MIN_DISTANCE, MAX_DISTANCE);
+	  request.distanceKm = askNumber("Distance to the area in km", MIN_DISTANCE, MAX_DISTANCE);
     else
-        request.distanceKm = 0;
+	  request.distanceKm = 0;
 
-    request.waterScarcity    = askLevel("Water scarcity");
+    request.waterScarcity = askLevel("Water scarcity");
     request.foodAvailability = askLevel("Food availability");
-    request.injuredPeople    = askNumber("Number of injured people", 0, MAX_INJURED);
-    request.previousAid      = askYesNo("Previous aid received");
+    request.injuredPeople = askNumber("Number of injured people", 0, MAX_INJURED);
+    request.previousAid = askYesNo("Previous aid received");
 
     return request;
 }
 
 // ======================= Main function ==========================
 
-int calculateNeedScore(const HelpRequest &request){
+int calculateNeedScore(const HelpRequest& request) {
     int score = 0;
 
     // Damage level
@@ -167,19 +167,19 @@ int calculateNeedScore(const HelpRequest &request){
 
     // Families affected
     if (request.familiesAffected > 100)
-        score += 3;
+	  score += 3;
     else if (request.familiesAffected > 50)
-        score += 2;
+	  score += 2;
     else
-        score += 1;
+	  score += 1;
 
-    // Route status
+    // Route status: maximum 2 points
     if (!request.routeOpen)
-        score += 3;
+	  score += 2;
     else if (request.distanceKm > 100)
-        score += 2;
+	  score += 1;
     else
-        score += 1;
+	  score += 0;
 
     // Water scarcity
     score += (int)request.waterScarcity * 2;
@@ -187,32 +187,33 @@ int calculateNeedScore(const HelpRequest &request){
     // Food availability
     score += (int)(2 - request.foodAvailability) * 2;
 
-
-    // Injured people
-    if (request.injuredPeople > 500)
-        score += 3;
-    else if (request.injuredPeople > 100)
-        score += 2;
+    // Injured people: maximum 4 points
+    if (request.injuredPeople == 0)
+	  score += 0;
+    else if (request.injuredPeople <= 100)
+	  score += 1;
+    else if (request.injuredPeople <= 500)
+	  score += 2;
     else
-        score += 1;
+	  score += 4;
 
     // Previous aid received
     if (!request.previousAid)
-        score += 2;
+	  score += 2;
 
     return score;
 }
 
 // ======================= Result display =========================
-const int RES_MARGIN   = 4;    // left indent of everything in the report
-const int LABEL_W      = 26;   // width of the "Label ......" part of a detail line
+const int RES_MARGIN = 4;    // left indent of everything in the report
+const int LABEL_W = 26;   // width of the "Label ......" part of a detail line
 const int MAX_NEED_SCORE = 25; // highest score calculateNeedScore() can give - update if the formula changes
 const int STOCK_NAME_W = 16;   // stock table: resource name column
-const int STOCK_NUM_W  = 11;   // stock table: each number column
+const int STOCK_NUM_W = 11;   // stock table: each number column
 
 // Colour for a low/medium/high answer. 'highIsBad' is false for food
 // availability, because having a LOT of food is the good case.
-string levelColour(Level level, bool highIsBad){
+string levelColour(Level level, bool highIsBad) {
     Level worst = highIsBad ? HIGH : LOW;
     if (level == worst)  return FG_RED;
     if (level == MEDIUM) return FG_YELLOW;
@@ -220,37 +221,37 @@ string levelColour(Level level, bool highIsBad){
 }
 
 // Same idea as actionColour, but as a background for the score meter
-string actionBackground(Action action){
-    switch (action){
-        case FULL_RELIEF:     return BG_RED;
-        case STANDARD_RELIEF: return BG_YELLOW;
-        case EMERGENCY_KIT:   return BG_CYAN;
-        default:              return BG_GREEN;
+string actionBackground(Action action) {
+    switch (action) {
+    case FULL_RELIEF:     return BG_RED;
+    case STANDARD_RELIEF: return BG_YELLOW;
+    case EMERGENCY_KIT:   return BG_CYAN;
+    default:              return BG_GREEN;
     }
 }
 
 // "1 truck" / "2 trucks" - adds an 's' unless the count is exactly one
-string countOf(int count, string word){
+string countOf(int count, string word) {
     return to_string(count) + " " + word + (count == 1 ? "" : "s");
 }
 
 // Adds "name (need X, have Y)" to the list, but only if we are short of it
-void addShortage(string &list, string name, int need, int have){
+void addShortage(string& list, string name, int need, int have) {
     if (have >= need)
-        return;
+	  return;
     if (list != "")
-        list += ", ";
+	  list += ", ";
     list += name + " (need " + to_string(need) + ", have " + to_string(have) + ")";
 }
 
 // Lists only the items that stop this package from being sent,
 // e.g. "packs (need 50, have 20), water bottles (need 100, have 40)"
-string missingItems(Action action){
+string missingItems(Action action) {
     string list = "";
-    addShortage(list, "trucks",        PACKAGES[action].trucksNeeded,       trucks);
-    addShortage(list, "packs",         PACKAGES[action].packsNeeded,        packs);
+    addShortage(list, "trucks", PACKAGES[action].trucksNeeded, trucks);
+    addShortage(list, "packs", PACKAGES[action].packsNeeded, packs);
     addShortage(list, "water bottles", PACKAGES[action].waterBottlesNeeded, waterBottles);
-    addShortage(list, "food packets",  PACKAGES[action].foodPacketsNeeded,  foodPackets);
+    addShortage(list, "food packets", PACKAGES[action].foodPacketsNeeded, foodPackets);
     addShortage(list, "medicine kits", PACKAGES[action].medicineKitsNeeded, medicineKits);
     return list;
 }
@@ -263,13 +264,13 @@ void printRequestSummary(const HelpRequest& request) {
 
     cardTop("REQUEST SUMMARY");
     cardPair("Damage level", levelToText(request.damageLevel), levelColour(request.damageLevel, true),
-	       "Families affected", to_string(request.familiesAffected), FG_WHITE);
+	  "Families affected", to_string(request.familiesAffected), FG_WHITE);
     cardPair("Access route", route, request.routeOpen ? FG_GREEN : FG_RED,
-	       "Injured people", to_string(request.injuredPeople), FG_WHITE);
+	  "Injured people", to_string(request.injuredPeople), FG_WHITE);
     cardPair("Water scarcity", levelToText(request.waterScarcity), levelColour(request.waterScarcity, true),
-	       "Previous aid", yesNo(request.previousAid), request.previousAid ? FG_GREEN : FG_YELLOW);
+	  "Previous aid", yesNo(request.previousAid), request.previousAid ? FG_GREEN : FG_YELLOW);
     cardPair("Food availability", levelToText(request.foodAvailability), levelColour(request.foodAvailability, false),
-	       "", "", "");
+	  "", "", "");
     cardBottom();
 }
 
@@ -488,7 +489,7 @@ void addStock() {
     printText("     4. Food packets");
     printText("     5. Medicine kits");
     int item = askNumber("  Enter choice", 1, 5);
-    
+
     cout << "\n";
     printQuestionTitle(3, "Enter quantity:");
     int amount = askNumber(" Quantity", 1, 1000);
