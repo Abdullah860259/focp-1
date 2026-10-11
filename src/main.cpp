@@ -8,13 +8,13 @@
 using namespace std;
 enum Commands
 {
-    HISTORY = 7
     EXIT = 0,
     RESOURCES = 1,
     HELP = 2,
     STATUS = 3,
     UPDATE = 4,
     INSTRUCTIONS = 5,
+    HISTORY = 7,
     INVALID_COMMAND = -1
 };
 
