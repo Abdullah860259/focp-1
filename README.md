@@ -13,8 +13,8 @@ Built for **CS 110: Fundamentals of Computer Programming, Assignment 1** (NUST S
 | Name | Contribution |
 |---|---|
 | Abdullah Anwar | _TODO: e.g. program structure, input engine, dispatch logic, Developed core engine architecture, and overall control flow. |
-| Hooria | _TODO_: e.g. Implemented Inventory Summary , Relief Request History , command routing in main.cpp, and updated instructions in output.cpp., Compiled the Assignment |
-| Abeera | _TODO_: e.g. Flowcharts, Status and Update features, Output layout, Need score|
+| Hooria Mansoor | _TODO_: e.g. Implemented Inventory Summary , Relief Request History , command routing in main.cpp, and updated instructions in output.cpp., Compiled the Assignment |
+| Abeera Ahsan | _TODO_: e.g. Made Flowcharts, Implemented the Status and Update Commands, Made Changes in the Terminal Output layout, Fixed the Need score|
 
 > **TODO:** Fill in who did what. The rubric checks that this matches the commit history, and each member must be able to explain the whole program in the viva.
 
@@ -41,7 +41,7 @@ Built for **CS 110: Fundamentals of Computer Programming, Assignment 1** (NUST S
 
 ## Features
 
-- Colour-coded, table-based console interface that adapts to the terminal width
+- Colour-coded, table-based console interface with different tables for each command
 - Input validation: every answer is checked and asked again until it is valid
 - Need score built from 7 factors about the affected area
 - Four relief packages, from Full Relief down to Defer / Monitor
@@ -99,8 +99,10 @@ Type a command at the prompt and press **Enter**. Capital letters and spaces are
 
 | Command | What it does |
 |---|---|
-| `get_help` | Make a new relief request for an area |
-| `show_inventory` | Show the current stock of every resource |
+| `help` | Make a new relief request for an area |
+| `resources` | Show the current stock of every resource |
+| `update`| Add or Remove stocks from the supply |
+| `status` | Show the summary of distributions |
 | `instructions` | Show the instructions screen again |
 | `exit` | Quit the program |
 
@@ -110,7 +112,7 @@ Anything else shows an "Invalid command" message.
 
 ## Making a Relief Request
 
-`get_help` asks these questions in order:
+`help` asks these questions in order:
 
 | # | Question | Accepted answers |
 |---|---|---|
@@ -137,7 +139,7 @@ After the questions, the program shows:
 ### Example
 
 ```
-> get_help
+> help
   Area name: Riverside Village
   Damage level (low/medium/high): high
   Families affected (10-200): 150
@@ -147,7 +149,7 @@ After the questions, the program shows:
   Number of injured people (0-1000): 40
   Previous aid received (yes/no): no
 
-  Need score: 23 / 25
+  Need score: 22 / 25
   DISPATCHED: A. Full Relief
 ```
 
@@ -161,20 +163,20 @@ Need Score = Damage + Families + Route + Water + Food + Injured + Aid
 
 | Factor | Rule | Points |
 |---|---|---|
-| Damage level | Low = 0, Medium = 3, High = 6 (`level × 3`) | 0 – 6 |
-| Families affected | 10–50 → 1, 51–100 → 2, 101–200 → 3 | 1 – 3 |
-| Access route | Open and ≤ 100 km → 1, Open and > 100 km → 2, Damaged → 3 | 1 – 3 |
-| Water scarcity | Low = 0, Medium = 2, High = 4 (`level × 2`) | 0 – 4 |
-| Food availability | High = 0, Medium = 2, Low = 4 (`(2 − level) × 2`, *less food means more need*) | 0 – 4 |
-| Injured people | 0–100 → 1, 101–500 → 2, 501–1000 → 3 | 1 – 3 |
-| Previous aid | Received → 0, Not received → 2 | 0 – 2 |
+| Damage level | Low = 0, Medium = 1, High = 2 (`level × 3`) | 0 / 3 / 6 |
+| Families affected | 10–50 → 1, 51–100 → 2, 101–200 → 3 | 1 / 2 / 3 |
+| Access route | Open and ≤ 100 km → 1, Open and > 100 km → 2, Damaged → 3 | 1 / 2 / 3 |
+| Water scarcity | Low = 0, Medium = 1, High = 2 (`level × 2`) | 0 / 2 / 4 |
+| Food availability | High = 1, Medium = 2, Low = 3 , *less food means more need*) | 1 / 2 / 3 |
+| Injured people | 0 = 0, 1–100 → 1, 101–500 → 2, 501–1000 → 4 | 0 / 1 / 2 / 4 |
+| Previous aid | Received → 0, Not received → 2 | 0 / 2 |
 | **Total** | | **3 – 25** |
 
 ### Why these weights
 
 > **TODO:** Explain in your own words why each factor has the weight it has. The rubric requires *every* weight to have a written reason linked to real-world impact. Questions to answer:
 > - Why is **damage** the heaviest factor (up to 6)?
-> - Why do **water** and **food** (up to 4 each) count more than **families** or **injured people** (up to 3)?
+> - Why do **water** and **injured people** (up to 4 each) count more than **families** , **food** and **access route** (up to 3)?
 > - Why does a **damaged route** add the most route points, and why does a long distance on an open route still add some?
 > - Why does **previous aid** only lower the score by 2 rather than more?
 
