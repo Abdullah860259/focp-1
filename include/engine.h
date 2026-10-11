@@ -1,3 +1,6 @@
+// engine.h - data types for a relief request and the relief packages,
+// plus the functions that take input, score a request and dispatch stock.
+// Definitions are in src/engine.cpp.
 #pragma once
 #include <string>
 
@@ -43,15 +46,16 @@ struct ReliefPackage
     int medicineKitsNeeded;
 };
 
+// The package table itself is defined once in engine.cpp; extern lets other files use it
 const int PACKAGE_COUNT = 4;
 extern const ReliefPackage PACKAGES[PACKAGE_COUNT];
 
-bool canAfford(Action action);
-bool dispatchPackage(Action action);
+bool canAfford(Action action);        // enough of all five resources for this package?
+bool dispatchPackage(Action action);  // subtract the package from stock (refuses if short)
 
-int calculateNeedScore(const HelpRequest &request);
+int calculateNeedScore(const HelpRequest &request);  // 3 (lowest need) to 25 (highest need)
 void saveRequest(const HelpRequest &request);
-void getHelp();
-void addStock();
-bool confirmExit();
-HelpRequest takeInputs();
+void getHelp();          // the "help" command
+void addStock();         // the "update" command (admin password)
+bool confirmExit();      // "Are you sure?" before exiting
+HelpRequest takeInputs();  // asks all the request questions

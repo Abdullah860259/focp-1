@@ -1,3 +1,12 @@
+// =================================================================
+//  output.cpp - everything that draws on the screen
+//
+//  - ANSI colour codes and box-drawing characters
+//  - Simple lines: bars, headings, text, bullets, numbered steps
+//  - Boxed tables (printRule / rowStart / cell) and cards
+//  - The instructions, goodbye and invalid-command screens
+// =================================================================
+
 #include "./../include/output.h"
 #include "./../include/engine.h"
 #include <iostream>
@@ -5,6 +14,7 @@
 #include <string>
 using namespace std;
 
+// windows.h is only needed on Windows (to switch on colours); the others are for Linux/Mac
 #ifdef _WIN32
     #include <windows.h>
 #else
@@ -13,11 +23,13 @@ using namespace std;
 #endif
 
 // ======================= Display settings =======================
-int WIDTH = 64;          // updated to the terminal width at runtime
+int WIDTH = 64;          // width of bars and headings; set to 80 in printInstructions()
 const int MARGIN = 4;    // left/right indent for inner content
 const int CMD_W  = 16;   // width of the command "badge" column (fits "show_inventory")
 
 // ======================= ANSI escape codes ======================
+// Printing one of these changes the colour/style of everything after it,
+// until RESET is printed. FG_ = text colour, BG_ = background colour.
 const string RESET     = "\033[0m";
 const string BOLD      = "\033[1m";
 const string CLEAR     = "\033[2J\033[H";   // clear screen, cursor to top
@@ -36,7 +48,7 @@ const string BG_GREEN  = "\033[42m";
 const string BG_GRAY   = "\033[100m";
 const string BG_BLACK  = "\033[40m";
 const string BG_RED    = "\033[41m";
-const string BLINK = "\033[5m";
+const string BLINK = "\033[5m";           // blinking text (used for low-stock warnings)
 const string FG_GRAY = "\033[90m";
 const string FG_BLUE = "\033[94m";
 
@@ -44,8 +56,9 @@ const string FG_BLUE = "\033[94m";
 // Written as raw bytes (UTF-8) so they work whatever the editor setting is.
 const string DOT_FULL = "\xE2\x97\x8F";    // filled circle
 const string DOT_EMPTY = "\xE2\x97\x8B";    // empty circle
-const string LINE_H = "\xE2\x94\x80";
-const string LINE_V = "\xE2\x94\x82";
+const string LINE_H = "\xE2\x94\x80";      // horizontal line
+const string LINE_V = "\xE2\x94\x82";      // vertical line
+// Corners (top-left, top-right, bottom-left, bottom-right) and T-joins for table borders
 const string CORNER_TL = "\xE2\x94\x8C", CORNER_TR = "\xE2\x94\x90";
 const string CORNER_BL = "\xE2\x94\x94", CORNER_BR = "\xE2\x94\x98";
 const string T_DOWN = "\xE2\x94\xAC", T_UP = "\xE2\x94\xB4";
@@ -69,6 +82,7 @@ void enableColors() {
 // Full-width coloured bar with text in the centre
 void printBar(string text, string style){
     int len = (int)text.length();
+    // Split the empty space evenly on both sides to centre the text
     int leftPad  = (WIDTH - len) / 2;
     int rightPad = WIDTH - leftPad - len;
     if (leftPad < 0)  leftPad = 0;
@@ -135,6 +149,7 @@ void printRule(char kind, int w1, int w2, int w3, int w4, int w5) {
 	  left = CORNER_BL;  mid = T_UP;    right = CORNER_BR;
     }
 
+    // Each column is its width + 2 (one space on each side of the text)
     string line = left + repeatText(LINE_H, w1 + 2);
     if (w2 > 0) line += mid + repeatText(LINE_H, w2 + 2);
     if (w3 > 0) line += mid + repeatText(LINE_H, w3 + 2);
@@ -174,6 +189,7 @@ string barCell(int filled, int width, const string& colour) {
 static int    cardWidth = 76;       // set by cardTop, used by the other card functions
 static string cardBorder = FG_BLUE;
 
+// Top border of a card with its title:  +- TITLE ---------+
 void cardTop(const string& title, int width, const string& border, const string& titleColour) {
     cardWidth = width;
     cardBorder = border;
@@ -191,11 +207,13 @@ void cardLine(const string& content, int visibleLength) {
 	  << string(pad, ' ') << " " << cardBorder << LINE_V << RESET << "\n";
 }
 
+// A line of plain coloured text inside a card (cut if it is too long)
 void cardText(const string& text, const string& colour) {
     string shown = text.substr(0, cardWidth - 4);
     cardLine(colour + shown + RESET, (int)shown.length());
 }
 
+// An empty line inside a card
 void cardBlank() {
     cardLine("", 0);
 }
@@ -205,6 +223,7 @@ static string pairSide(const string& label, const string& value, const string& c
     if (label == "")
 	  return string(PAIR_SIDE_W, ' ');
     string dots = label + " ";
+    // Fill with dots up to a fixed width so all the values line up
     while ((int)dots.length() < PAIR_LABEL_W)
 	  dots += ".";
     int used = (int)dots.length() + 1 + (int)value.length();
@@ -227,6 +246,7 @@ void cardLabelled(const string& label, const string& text, const string& colour)
 
 // "Need score   [coloured bar]  24 / 25" - one square per point
 void cardMeter(const string& label, int score, int maxScore, const string& fill) {
+    // One coloured square for every point scored, grey squares for the rest
     string bar = "";
     for (int point = 1; point <= maxScore; point++)
 	  bar += (point <= score ? fill : BG_GRAY) + " ";
@@ -243,12 +263,13 @@ void cardCheck(bool ok, const string& text) {
 	  : BG_RED + FG_WHITE + BOLD + " NO " + RESET;
     int room = cardWidth - 4 - BADGE_W;
 
+    // Print the text in pieces that fit the card, breaking at a space where possible
     string rest = text;
     bool firstLine = true;
     while (rest != "") {
 	  string part = rest;
 	  if ((int)rest.length() > room) {
-		size_t cut = rest.rfind(' ', room);
+		size_t cut = rest.rfind(' ', room);   // last space that still fits
 		if (cut == string::npos || cut == 0) {
 		    part = rest.substr(0, room);
 		    rest = rest.substr(room);
@@ -261,12 +282,14 @@ void cardCheck(bool ok, const string& text) {
 	  else {
 		rest = "";
 	  }
+	  // Badge on the first line only; later lines are indented to line up under the text
 	  string front = firstLine ? badge + "  " : string(BADGE_W, ' ');
 	  cardLine(front + part, BADGE_W + (int)part.length());
 	  firstLine = false;
     }
 }
 
+// Bottom border of the current card
 void cardBottom() {
     cout << INDENT << cardBorder << CORNER_BL << repeatText(LINE_H, cardWidth - 2)
 	  << CORNER_BR << RESET << "\n";
@@ -278,13 +301,15 @@ void printMenuRow(const string& name, const string& description, const string& d
 	  << cell(description, 54, ALIGN_LEFT, descriptionColour) << "\n";
 }
 
-// ======================= Main function ==========================
+// ======================= Screens ================================
 
+// Welcome screen: banner, introduction, command menu, how to use, and an example.
+// Shown when the program starts and by the "instructions" command.
 void printInstructions(){
 
     enableColors();
     WIDTH = 80;   // fixed width, so the tables and bars always line up
-    cout << CLEAR;
+    cout << CLEAR;                    // wipe the screen before drawing
 
     // ---------- Banner ----------
     printBar("", BG_BLUE);
@@ -328,7 +353,7 @@ void printInstructions(){
     printStep(4, "You cannot request more than what is in stock.");
 
     // ---------- Example ----------
-   // ---------- Example ----------
+    // A real request and its result (score 21 / 25 -> Full Relief)
     printHeading("EXAMPLE");
     cardTop("AN EXAMPLE");
     cardText("Enter a command: help", FG_GREEN + BOLD);
@@ -352,6 +377,7 @@ void printInstructions(){
 }
 
 
+// Goodbye card shown after the user confirms "exit"
 void printExitMessage(){
     cout << "\n";
     cardTop("GOODBYE!", 66);
@@ -360,6 +386,7 @@ void printExitMessage(){
     cout << "\n";
 }
 
+// Yellow warning bar for a command the program does not know
 void invalidCommandMessage(){
     cout << "\n";
     printBar("Invalid command. Type 'instructions' to see the list of commands.",

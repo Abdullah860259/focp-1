@@ -1,3 +1,10 @@
+// =================================================================
+//  utility.cpp - small helpers used all over the program
+//
+//  Cleaning typed input, changing text, reading a hidden password
+//  and pausing until Enter is pressed.
+// =================================================================
+
 #include "./../include/utility.h"
 #include "./../include/output.h"
 
@@ -6,10 +13,13 @@
 #include <iostream>
 using namespace std;
 
+// conio.h gives _getch(), which reads one key without showing it (Windows only)
 #ifdef _WIN32
 #include <conio.h>      // _getch
 #endif
 
+// Removes all spaces and makes every letter lowercase, so "  Get Help " becomes "gethelp".
+// This lets the user type commands and answers in any capitalisation.
 string cleanInput(const string& input) {
     string cleaned;
     for (char c : input) {
@@ -66,6 +76,7 @@ string readPassword() {
 #endif
 }
 
+// Pauses until the user presses Enter, so a screen does not scroll away straight away
 void waitForEnter() {
     cout << "\n    " << FG_GRAY << "Press Enter to continue..." << RESET;
     string ignored;

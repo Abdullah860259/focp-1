@@ -1,3 +1,11 @@
+// =================================================================
+//  main.cpp - Relief Supply Distribution System
+//
+//  Program entry point. Shows the instructions screen, then keeps
+//  reading commands from the user and sends each one to the right
+//  function until the user exits.
+// =================================================================
+
 #include "./../include/output.h"
 #include "./../include/inventory.h"
 #include "./../include/utility.h"
@@ -6,6 +14,9 @@
 #include <iostream>
 #include <string>
 using namespace std;
+
+// Every command the user can type, as a named number.
+// The switch in main() uses these names instead of comparing strings everywhere.
 enum Commands
 {
     EXIT = 0,
@@ -18,6 +29,8 @@ enum Commands
     INVALID_COMMAND = -1
 };
 
+// Turns the typed text into a Commands value.
+// The text has already been cleaned (lowercase, no spaces) by cleanInput().
 Commands tocommands(const string &command)
 {
     if (command == "exit")
@@ -40,42 +53,46 @@ Commands tocommands(const string &command)
 
 int main()
 {
-    printInstructions();
+    printInstructions();     // welcome screen with the list of commands
     string input;
+
+    // Main command loop: runs until the user confirms 'exit'
     while (true)
     {
 	  cout << "\n  " << FG_GREEN << BOLD << "Enter a command (or 'exit' to quit): " << RESET;
-        getline(cin, input);
-        string cleanInputStr = cleanInput(input);
+        getline(cin, input);                          // read the whole line, spaces included
+        string cleanInputStr = cleanInput(input);     // "  Help " -> "help"
+
+        // Run the function that belongs to the command
         switch (tocommands(cleanInputStr))
         {
         case EXIT:
-		if (confirmExit()) // If confirmExit is true
+		if (confirmExit()) // only quit if the user answers yes
 		{
 		    printExitMessage();
 		    return 0;
 		}
             break;
         case RESOURCES:
-            showInventory();
+            showInventory();          // stock table with low-stock warnings
             break;
         case HELP:
-            getHelp();
+            getHelp();                // new relief request
             break;
         case INSTRUCTIONS:
-            printInstructions();
+            printInstructions();      // show the welcome screen again
             break;
 	  case STATUS:
-		showStatus();
+		showStatus();             // served / deferred summary
 		break;
 	  case UPDATE:
-		addStock();
+		addStock();               // admin: add or remove stock
 		break;
 	  case HISTORY:
-         showRequestHistorySummary();
+         showRequestHistorySummary();   // where saved requests are stored
          break;
         case INVALID_COMMAND:
-            invalidCommandMessage();
+            invalidCommandMessage();  // unknown command
             break;
         default:
             break;

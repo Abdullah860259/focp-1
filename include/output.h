@@ -1,3 +1,5 @@
+// output.h - colours and every function that draws on the screen.
+// Definitions are in src/output.cpp.
 #pragma once
 #include <iostream>
 #include <string>
@@ -12,6 +14,7 @@ extern const std::string DOT_FULL;    // filled circle
 extern const std::string DOT_EMPTY;   // empty circle
 extern const std::string LINE_H;      // a short horizontal line
 
+// How text is placed inside a table cell
 enum Align { ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER };
 
 // ---------- Screens ----------

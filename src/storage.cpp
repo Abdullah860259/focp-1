@@ -1,3 +1,10 @@
+// =================================================================
+//  storage.cpp - saving requests to a file
+//
+//  Every relief request is added as one line to data/requests.csv,
+//  which can be opened in Excel or Google Sheets.
+// =================================================================
+
 #include "./../include/storage.h"
 #include "./../include/output.h"
 #include <iostream>
@@ -6,6 +13,7 @@
 #include <ctime>
 using namespace std;
 
+// The function that creates a folder has a different name on Windows and Linux/Mac
 #ifdef _WIN32
     #include <direct.h>      // _mkdir
 #else
@@ -33,6 +41,7 @@ bool fileExists(string path){
     return file.good();
 }
 
+// LOW / MEDIUM / HIGH -> "Low" / "Medium" / "High" (an enum on its own would print as 0 / 1 / 2)
 string levelToText(Level level){
     switch (level){
         case LOW:    return "Low";
@@ -42,6 +51,7 @@ string levelToText(Level level){
     return "Unknown";
 }
 
+// true -> "Yes", false -> "No"
 string yesNo(bool value){
     return value ? "Yes" : "No";
 }
@@ -72,7 +82,7 @@ string currentTime(){
 // Adds one request as a new line at the end of data/requests.csv
 void saveRequest(const HelpRequest &request){
     makeDataFolder();
-    bool isNewFile = !fileExists(REQUESTS_FILE);
+    bool isNewFile = !fileExists(REQUESTS_FILE);   // check BEFORE opening, opening creates the file
 
     ofstream file(REQUESTS_FILE, ios::app);    // ios::app = add to the end, keep old lines
     if (!file){
@@ -81,10 +91,12 @@ void saveRequest(const HelpRequest &request){
         return;
     }
 
+    // Column names go on the first line only
     if (isNewFile)
         file << "Time,Area,Damage Level,Families Affected,Route,Distance (km),"
              << "Water Scarcity,Food Availability,Injured People,Previous Aid\n";
 
+    // One request = one line, values separated by commas
     file << currentTime()                         << ","
          << csvText(request.areaName)             << ","
          << levelToText(request.damageLevel)      << ","
@@ -99,6 +111,7 @@ void saveRequest(const HelpRequest &request){
     cout << "\n    " << FG_GREEN << BOLD << "Request saved to " << REQUESTS_FILE
          << RESET << "\n";
 }
+// The "history" command: tells the user where the saved requests are
 void showRequestHistorySummary() {
     cout << "\n\n";
     printBar("Relief Request Statistics", BG_BLUE + FG_WHITE + BOLD);

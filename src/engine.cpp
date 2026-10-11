@@ -1,3 +1,13 @@
+// =================================================================
+//  engine.cpp - the "brain" of the program
+//
+//  - Relief package table and stock checks (canAfford / dispatchPackage)
+//  - Validated input helpers and the request questions (takeInputs)
+//  - Need score formula (calculateNeedScore)
+//  - The help command: decision rules, fallback and result screen (getHelp)
+//  - The update command (admin password) and exit confirmation
+// =================================================================
+
 #include "./../include/engine.h"
 #include "./../include/output.h"
 #include "./../include/utility.h"
@@ -9,6 +19,7 @@
 using namespace std;
 
 // ======================= Input limits ===========================
+// Allowed ranges for the number questions in takeInputs()
 const int MIN_FAMILIES = 10;
 const int MAX_FAMILIES = 200;
 const int MIN_DISTANCE = 1;      // km
@@ -27,7 +38,7 @@ const ReliefPackage PACKAGES[PACKAGE_COUNT] = {
     { "D. Defer / Monitor",      0,      0 ,     0,          0,             0 }
 };
 
-// True if there is enough of EVERY item
+// True if there is enough of EVERY item (all five must pass, joined with &&)
 bool canAfford(Action action) {
     return trucks >= PACKAGES[action].trucksNeeded
 	  && packs >= PACKAGES[action].packsNeeded
@@ -111,6 +122,7 @@ bool askTwoChoice(string question, string first, string second) {
     }
 }
 
+// Yes/no question - just askTwoChoice() with "yes" and "no"
 bool askYesNo(string question) {
     return askTwoChoice(question, "yes", "no");
 }
@@ -132,6 +144,8 @@ Level askLevel(string question) {
 
 // ======================= Request input ==========================
 
+// Asks every question for one relief request and returns all the answers
+// together in a HelpRequest. Each helper keeps asking until the answer is valid.
 HelpRequest takeInputs() {
     HelpRequest request;
 
@@ -144,6 +158,7 @@ HelpRequest takeInputs() {
     request.familiesAffected = askNumber("Families affected", MIN_FAMILIES, MAX_FAMILIES);
 
     request.routeOpen = askTwoChoice("Access route", "open", "damaged");
+    // Distance only matters when the route is open; a damaged route stores 0
     if (request.routeOpen)
 	  request.distanceKm = askNumber("Distance to the area in km", MIN_DISTANCE, MAX_DISTANCE);
     else
@@ -157,15 +172,17 @@ HelpRequest takeInputs() {
     return request;
 }
 
-// ======================= Main function ==========================
+// ======================= Need score ============================
 
+// Adds up points from all 7 answers. Higher score = more urgent need.
+// Lowest possible score is 3, highest is 25 (see MAX_NEED_SCORE below).
 int calculateNeedScore(const HelpRequest& request) {
     int score = 0;
 
-    // Damage level
+    // Damage level: Low 0, Medium 3, High 6 (enum value x 3)
     score += (int)request.damageLevel * 3;
 
-    // Families affected
+    // Families affected: 10-50 -> 1, 51-100 -> 2, 101-200 -> 3
     if (request.familiesAffected > 100)
 	  score += 3;
     else if (request.familiesAffected > 50)
@@ -173,7 +190,7 @@ int calculateNeedScore(const HelpRequest& request) {
     else
 	  score += 1;
 
-    // Route status: maximum 3 points
+    // Route status: damaged 3, open but far (>100 km) 2, open and near 1
     if (!request.routeOpen)
 	  score += 3;
     else if (request.distanceKm > 100)
@@ -181,13 +198,13 @@ int calculateNeedScore(const HelpRequest& request) {
     else
 	  score += 1;
 
-    // Water scarcity
+    // Water scarcity: Low 0, Medium 2, High 4 (enum value x 2)
     score += (int)request.waterScarcity * 2;
 
-    // Food availability
+    // Food availability is reversed - LESS food means MORE need: High 1, Medium 2, Low 3
     score += (3 - (int)request.foodAvailability);
 
-    // Injured people: maximum 4 points
+    // Injured people: none 0, 1-100 -> 1, 101-500 -> 2, over 500 -> 4
     if (request.injuredPeople == 0)
 	  score += 0;
     else if (request.injuredPeople <= 100)
@@ -197,7 +214,7 @@ int calculateNeedScore(const HelpRequest& request) {
     else
 	  score += 4;
 
-    // Previous aid received
+    // Areas that have not received any aid yet get 2 extra points
     if (!request.previousAid)
 	  score += 2;
 
@@ -288,6 +305,7 @@ string badgeStyle(Action action) {
     return actionBackground(action) + (action == FULL_RELIEF ? FG_WHITE : FG_BLACK) + BOLD;
 }
 
+// Card with the score meter, the recommended package and what it needs
 void printNeedAssessment(int score, Action recommended) {
     cardTop("NEED ASSESSMENT");
     cardMeter("Need score", score, MAX_NEED_SCORE, actionBackground(recommended));
@@ -333,6 +351,7 @@ void stockRow(const string& name, int before, int left) {
 	  << cell(to_string(left), 8, ALIGN_RIGHT, (left == 0 ? FG_RED : FG_GREEN) + BOLD) << "\n";
 }
 
+// Table of all five resources: stock before this request, how much was used, and what is left
 void printStockTable(int trucksBefore, int packsBefore, int waterBefore, int foodBefore, int medicineBefore) {
     printRule('t', 16, 8, 8, 8);
     cout << rowStart() << cell("RESOURCE", 16, ALIGN_LEFT, FG_CYAN + BOLD)
@@ -350,9 +369,12 @@ void printStockTable(int trucksBefore, int packsBefore, int waterBefore, int foo
 
 // ======================= Help command ===========================
 
+// The "help" command: asks the questions, saves the request, calculates the need score,
+// picks a package, falls back to a smaller one if stock is short, updates the stock
+// and shows the full result.
 void getHelp() {
     HelpRequest request = takeInputs();
-    saveRequest(request);
+    saveRequest(request);                 // add it to data/requests.csv
 
     printHeading("REQUEST " + to_string(requestsServed + requestsDeferred + 1) + "  -  "
 	  + upperCase(shorten(request.areaName, 30)));
@@ -360,14 +382,16 @@ void getHelp() {
 
     // ---------- Need assessment ----------
     int needScore = calculateNeedScore(request);
+    // Decision rule: the score decides which package is recommended
     Action relief = (needScore >= 20) ? FULL_RELIEF :
 	  (needScore >= 12) ? STANDARD_RELIEF :
 	  (needScore >= 8) ? EMERGENCY_KIT :
 	  DEFER;
-    Action recommended = relief;
+    Action recommended = relief;          // remember it, 'relief' may change below
     printNeedAssessment(needScore, recommended);
 
     // ---------- Dispatch ----------
+    // Save the stock BEFORE dispatching, so the table can show how much was used
     int trucksBefore = trucks;
     int packsBefore = packs;
     int waterBefore = waterBottles;
@@ -393,6 +417,7 @@ void getHelp() {
 	  cardCheck(true, PACKAGES[relief].name + "  - sent");
     cardBottom();
 
+    // Take the stock out (does nothing for DEFER) and count the request for the status screen
     dispatchPackage(relief);
     if (relief == DEFER) requestsDeferred++;
     else                 requestsServed++;
@@ -420,7 +445,7 @@ void getHelp() {
 	  }
     }
     cout << "\n";
-    printLowStockWarnings();
+    printLowStockWarnings();              // red warning for anything now below 25%
 }
 
 // ======================= Admin password =========================
@@ -494,6 +519,7 @@ void addStock() {
     printQuestionTitle(3, "Enter quantity:");
     int amount = askNumber(" Quantity", 1, 1000);
 
+    // Point at the chosen stock variable, so one line below can change any of the five
     int* stock = (item == 1) ? &trucks : (item == 2) ? &packs : (item == 3) ? &waterBottles : (item == 4) ? &foodPackets : &medicineKits;
     string label = (item == 1) ? "Trucks" : (item == 2) ? "Supply packs" : (item == 3) ? "Water bottles" : (item == 4) ? "Food packets" : "Medicine kits";
 
@@ -502,13 +528,14 @@ void addStock() {
 	  printInputError("Cannot remove more than you have (" + to_string(previous) + ")");
 	  return;
     }
-    *stock += add ? amount : -amount;
+    *stock += add ? amount : -amount;     // change the real variable through the pointer
 
     cout << "\n";
     printUpdated(label, add, amount, previous, *stock);
     waitForEnter();
 }
 
+// Asks "Are you sure?" before quitting. Returns true for yes, false for no.
 bool confirmExit() {
     printHeading("EXIT PROGRAM"); // Header Banner
 
