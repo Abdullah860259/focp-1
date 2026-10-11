@@ -163,6 +163,7 @@ void printInstructions(){
     printBullet("View the supplies currently in stock");
     printBullet("Add new supplies when donations arrive");
     printBullet("Check the overall distribution status");
+    printBullet("history / requests : View relief request history summary");
 
     // ---------- Commands ----------
     printHeading("COMMANDS");
