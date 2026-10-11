@@ -2,12 +2,13 @@
 #include "./../include/inventory.h"
 #include "./../include/utility.h"
 #include "./../include/engine.h"
+#include "../include/storage.h"
 #include <iostream>
 #include <string>
 using namespace std;
-
 enum Commands
 {
+    HISTORY = 7
     EXIT = 0,
     RESOURCES = 1,
     HELP = 2,
@@ -31,6 +32,8 @@ Commands tocommands(const string &command)
         return UPDATE;
     else if (command == "instructions")
         return INSTRUCTIONS;
+    else if (command == "history" || command == "requests")
+        return HISTORY;
     else
         return INVALID_COMMAND; // Default case
 }
@@ -66,6 +69,9 @@ int main()
 	  case UPDATE:
 		addStock();
 		break;
+	  case HISTORY:
+         showRequestHistorySummary();
+         break;
         case INVALID_COMMAND:
             invalidCommandMessage();
             break;
