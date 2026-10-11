@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 // Current stock, shared by every file that includes this header.
 // The real variables (with their starting values) live in inventory.cpp.
@@ -11,5 +12,7 @@ extern int requestsServed;
 extern int requestsDeferred;
 
 void showStatus();
+void recordRequest(const std::string & area, int score, bool served, const std::string & package);
 void showInventory();
 void showSummaryStats();
+void printLowStockWarnings();     // prints nothing if no item is low

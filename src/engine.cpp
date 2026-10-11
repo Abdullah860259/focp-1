@@ -13,7 +13,7 @@ const int MIN_FAMILIES = 10;
 const int MAX_FAMILIES = 200;
 const int MIN_DISTANCE = 1;      // km
 const int MAX_DISTANCE = 500;    // km
-const int MAX_INJURED  = 1000;
+const int MAX_INJURED = 1000;
 
 // ======================= Relief packages ========================
 
@@ -27,25 +27,25 @@ const ReliefPackage PACKAGES[PACKAGE_COUNT] = {
     { "D. Defer / Monitor",      0,      0 ,     0,          0,             0 }
 };
 
-// True if there are enough trucks AND packs left to send this package
-bool canAfford(Action action){
+// True if there is enough of EVERY item
+bool canAfford(Action action) {
     return trucks >= PACKAGES[action].trucksNeeded
-        && packs  >= PACKAGES[action].packsNeeded
-        && waterBottles >= PACKAGES[action].waterBottlesNeeded
-        && foodPackets >= PACKAGES[action].foodPacketsNeeded
-        && medicineKits >= PACKAGES[action].medicineKitsNeeded;
+	  && packs >= PACKAGES[action].packsNeeded
+	  && waterBottles >= PACKAGES[action].waterBottlesNeeded
+	  && foodPackets >= PACKAGES[action].foodPacketsNeeded
+	  && medicineKits >= PACKAGES[action].medicineKitsNeeded;
 }
 
 // Takes everything the package needs out of stock.
 // Refuses (returns false) instead of letting stock go below zero.
-bool dispatchPackage(Action action){
+bool dispatchPackage(Action action) {
     if (!canAfford(action))
-        return false;
+	  return false;
 
-    trucks       -= PACKAGES[action].trucksNeeded;
-    packs        -= PACKAGES[action].packsNeeded;
+    trucks -= PACKAGES[action].trucksNeeded;
+    packs -= PACKAGES[action].packsNeeded;
     waterBottles -= PACKAGES[action].waterBottlesNeeded;
-    foodPackets  -= PACKAGES[action].foodPacketsNeeded;
+    foodPackets -= PACKAGES[action].foodPacketsNeeded;
     medicineKits -= PACKAGES[action].medicineKitsNeeded;
     return true;
 }
@@ -53,113 +53,113 @@ bool dispatchPackage(Action action){
 // ======================= Generic input helpers ==================
 
 // Prints an error line in yellow so it stands out from normal text
-void printInputError(string message){
+void printInputError(string message) {
     cout << "    " << FG_YELLOW << BOLD << "! " << message << RESET << "\n";
 }
 
 // Asks for free text and repeats until the answer is not empty
-string askText(string question){
+string askText(string question) {
     string answer;
-    while (true){
-        cout << "    " << question << ": ";
-        getline(cin, answer);
-        if (cleanInput(answer) != "")
-            return answer;
-        printInputError("This cannot be empty.");
+    while (true) {
+	  cout << "    " << question << ": ";
+	  getline(cin, answer);
+	  if (cleanInput(answer) != "")
+		return answer;
+	  printInputError("This cannot be left empty.");
     }
 }
 
 // Asks for a whole number and repeats until it is between min and max.
 // Converted by hand (digit by digit) so letters, signs or decimals are rejected.
-int askNumber(string question, int min, int max){
+int askNumber(string question, int min, int max) {
     string answer;
-    while (true){
-        cout << "    " << question << " (" << min << "-" << max << "): ";
-        getline(cin, answer);
-        answer = cleanInput(answer);
+    while (true) {
+	  cout << "    " << question << " (" << min << "-" << max << "): ";
+	  getline(cin, answer);
+	  answer = cleanInput(answer);
 
-        bool valid = (answer != "" && answer.length() <= 6);
-        int value = 0;
-        for (int i = 0; valid && i < (int)answer.length(); i++){
-            if (answer[i] < '0' || answer[i] > '9')
-                valid = false;
-            else
-                value = value * 10 + (answer[i] - '0');
-        }
+	  bool valid = (answer != "" && answer.length() <= 6);
+	  int value = 0;
+	  for (int i = 0; valid && i < (int)answer.length(); i++) {
+		if (answer[i] < '0' || answer[i] > '9')
+		    valid = false;
+		else
+		    value = value * 10 + (answer[i] - '0');
+	  }
 
-        if (valid && value >= min && value <= max)
-            return value;
-        printInputError("Please enter a whole number from " + to_string(min)
-                        + " to " + to_string(max) + ".");
+	  if (valid && value >= min && value <= max)
+		return value;
+	  printInputError("Please enter a whole number from " + to_string(min)
+		+ " to " + to_string(max) + ".");
     }
 }
 
 // Asks the user to pick one of two answers; returns true for the first one.
 // Typing just the first letter also works (e.g. "y" for "yes").
-bool askTwoChoice(string question, string first, string second){
+bool askTwoChoice(string question, string first, string second) {
     string answer;
-    while (true){
-        cout << "    " << question << " (" << first << "/" << second << "): ";
-        getline(cin, answer);
-        answer = cleanInput(answer);
+    while (true) {
+	  cout << "    " << question << " (" << first << "/" << second << "): ";
+	  getline(cin, answer);
+	  answer = cleanInput(answer);
 
-        if (answer == first  || answer == first.substr(0, 1))
-            return true;
-        if (answer == second || answer == second.substr(0, 1))
-            return false;
-        printInputError("Please type '" + first + "' or '" + second + "'.");
+	  if (answer == first || answer == first.substr(0, 1))
+		return true;
+	  if (answer == second || answer == second.substr(0, 1))
+		return false;
+	  printInputError("Please type '" + first + "' or '" + second + "'.");
     }
 }
 
-bool askYesNo(string question){
+bool askYesNo(string question) {
     return askTwoChoice(question, "yes", "no");
 }
 
 // Asks for low / medium / high (or l / m / h)
-Level askLevel(string question){
+Level askLevel(string question) {
     string answer;
-    while (true){
-        cout << "    " << question << " (low/medium/high): ";
-        getline(cin, answer);
-        answer = cleanInput(answer);
+    while (true) {
+	  cout << "    " << question << " (low/medium/high): ";
+	  getline(cin, answer);
+	  answer = cleanInput(answer);
 
-        if (answer == "low"    || answer == "l") return LOW;
-        if (answer == "medium" || answer == "m") return MEDIUM;
-        if (answer == "high"   || answer == "h") return HIGH;
-        printInputError("Please type 'low', 'medium' or 'high'.");
+	  if (answer == "low" || answer == "l") return LOW;
+	  if (answer == "medium" || answer == "m") return MEDIUM;
+	  if (answer == "high" || answer == "h") return HIGH;
+	  printInputError("Please type 'low', 'medium' or 'high'.");
     }
 }
 
 // ======================= Request input ==========================
 
-HelpRequest takeInputs(){
+HelpRequest takeInputs() {
     HelpRequest request;
 
     cout << "\n";
     printBar("New Relief Request", BG_BLUE + FG_WHITE + BOLD);
     cout << "\n";
 
-    request.areaName         = askText("Area name");
-    request.damageLevel      = askLevel("Damage level");
+    request.areaName = askText("Area name");
+    request.damageLevel = askLevel("Damage level");
     request.familiesAffected = askNumber("Families affected", MIN_FAMILIES, MAX_FAMILIES);
 
     request.routeOpen = askTwoChoice("Access route", "open", "damaged");
     if (request.routeOpen)
-        request.distanceKm = askNumber("Distance to the area in km", MIN_DISTANCE, MAX_DISTANCE);
+	  request.distanceKm = askNumber("Distance to the area in km", MIN_DISTANCE, MAX_DISTANCE);
     else
-        request.distanceKm = 0;
+	  request.distanceKm = 0;
 
-    request.waterScarcity    = askLevel("Water scarcity");
+    request.waterScarcity = askLevel("Water scarcity");
     request.foodAvailability = askLevel("Food availability");
-    request.injuredPeople    = askNumber("Number of injured people", 0, MAX_INJURED);
-    request.previousAid      = askYesNo("Previous aid received");
+    request.injuredPeople = askNumber("Number of injured people", 0, MAX_INJURED);
+    request.previousAid = askYesNo("Previous aid received");
 
     return request;
 }
 
 // ======================= Main function ==========================
 
-int calculateNeedScore(const HelpRequest &request){
+int calculateNeedScore(const HelpRequest& request) {
     int score = 0;
 
     // Damage level
@@ -167,251 +167,260 @@ int calculateNeedScore(const HelpRequest &request){
 
     // Families affected
     if (request.familiesAffected > 100)
-        score += 3;
+	  score += 3;
     else if (request.familiesAffected > 50)
-        score += 2;
+	  score += 2;
     else
-        score += 1;
+	  score += 1;
 
-    // Route status
+    // Route status: maximum 3 points
     if (!request.routeOpen)
-        score += 3;
+	  score += 3;
     else if (request.distanceKm > 100)
-        score += 2;
+	  score += 2;
     else
-        score += 1;
+	  score += 1;
 
     // Water scarcity
     score += (int)request.waterScarcity * 2;
 
     // Food availability
-    score += (int)(2 - request.foodAvailability) * 2;
+    score += (3 - (int)request.foodAvailability);
 
-
-    // Injured people
-    if (request.injuredPeople > 500)
-        score += 3;
-    else if (request.injuredPeople > 100)
-        score += 2;
+    // Injured people: maximum 4 points
+    if (request.injuredPeople == 0)
+	  score += 0;
+    else if (request.injuredPeople <= 100)
+	  score += 1;
+    else if (request.injuredPeople <= 500)
+	  score += 2;
     else
-        score += 1;
+	  score += 4;
 
     // Previous aid received
     if (!request.previousAid)
-        score += 2;
+	  score += 2;
 
     return score;
 }
 
 // ======================= Result display =========================
-const int RES_MARGIN   = 4;    // left indent of everything in the report
-const int LABEL_W      = 26;   // width of the "Label ......" part of a detail line
+const int RES_MARGIN = 4;    // left indent of everything in the report
+const int LABEL_W = 26;   // width of the "Label ......" part of a detail line
 const int MAX_NEED_SCORE = 25; // highest score calculateNeedScore() can give - update if the formula changes
 const int STOCK_NAME_W = 16;   // stock table: resource name column
-const int STOCK_NUM_W  = 11;   // stock table: each number column
-
-// One "Label ........ value" line; the dots are made with setfill('.')
-void printDetail(string label, string value, string valueColour){
-    cout << setw(RES_MARGIN) << "" << left << setfill('.') << setw(LABEL_W) << label + " "
-         << setfill(' ') << right << " " << valueColour << BOLD << value << RESET << "\n";
-}
+const int STOCK_NUM_W = 11;   // stock table: each number column
 
 // Colour for a low/medium/high answer. 'highIsBad' is false for food
 // availability, because having a LOT of food is the good case.
-string levelColour(Level level, bool highIsBad){
+string levelColour(Level level, bool highIsBad) {
     Level worst = highIsBad ? HIGH : LOW;
     if (level == worst)  return FG_RED;
     if (level == MEDIUM) return FG_YELLOW;
     return FG_GREEN;
 }
 
-// Colour that goes with each package: the bigger the package, the more urgent
-string actionColour(Action action){
-    switch (action){
-        case FULL_RELIEF:     return FG_RED;
-        case STANDARD_RELIEF: return FG_YELLOW;
-        case EMERGENCY_KIT:   return FG_CYAN;
-        default:              return FG_GREEN;
-    }
-}
-
 // Same idea as actionColour, but as a background for the score meter
-string actionBackground(Action action){
-    switch (action){
-        case FULL_RELIEF:     return BG_RED;
-        case STANDARD_RELIEF: return BG_YELLOW;
-        case EMERGENCY_KIT:   return BG_CYAN;
-        default:              return BG_GREEN;
+string actionBackground(Action action) {
+    switch (action) {
+    case FULL_RELIEF:     return BG_RED;
+    case STANDARD_RELIEF: return BG_YELLOW;
+    case EMERGENCY_KIT:   return BG_CYAN;
+    default:              return BG_GREEN;
     }
 }
 
 // "1 truck" / "2 trucks" - adds an 's' unless the count is exactly one
-string countOf(int count, string word){
+string countOf(int count, string word) {
     return to_string(count) + " " + word + (count == 1 ? "" : "s");
 }
 
-// "2 trucks, 50 packs" - what a package costs
-string packageCost(Action action){
-    return countOf(PACKAGES[action].trucksNeeded, "truck") + ", "
-         + countOf(PACKAGES[action].packsNeeded,  "pack") + ", "
-         + countOf(PACKAGES[action].waterBottlesNeeded, "water bottle") + ", "
-         + countOf(PACKAGES[action].foodPacketsNeeded, "food packet") + ", "
-         + countOf(PACKAGES[action].medicineKitsNeeded, "medicine kit");
-}
-
 // Adds "name (need X, have Y)" to the list, but only if we are short of it
-void addShortage(string &list, string name, int need, int have){
+void addShortage(string& list, string name, int need, int have) {
     if (have >= need)
-        return;
+	  return;
     if (list != "")
-        list += ", ";
+	  list += ", ";
     list += name + " (need " + to_string(need) + ", have " + to_string(have) + ")";
 }
 
 // Lists only the items that stop this package from being sent,
 // e.g. "packs (need 50, have 20), water bottles (need 100, have 40)"
-string missingItems(Action action){
+string missingItems(Action action) {
     string list = "";
-    addShortage(list, "trucks",        PACKAGES[action].trucksNeeded,       trucks);
-    addShortage(list, "packs",         PACKAGES[action].packsNeeded,        packs);
+    addShortage(list, "trucks", PACKAGES[action].trucksNeeded, trucks);
+    addShortage(list, "packs", PACKAGES[action].packsNeeded, packs);
     addShortage(list, "water bottles", PACKAGES[action].waterBottlesNeeded, waterBottles);
-    addShortage(list, "food packets",  PACKAGES[action].foodPacketsNeeded,  foodPackets);
+    addShortage(list, "food packets", PACKAGES[action].foodPacketsNeeded, foodPackets);
     addShortage(list, "medicine kits", PACKAGES[action].medicineKitsNeeded, medicineKits);
     return list;
 }
 
 // Echo of everything the user typed, so they can check it at a glance
-void printRequestSummary(const HelpRequest &request){
-    printHeading("REQUEST SUMMARY");
-
+void printRequestSummary(const HelpRequest& request) {
     string route = request.routeOpen
-                 ? "Open (" + to_string(request.distanceKm) + " km)"
-                 : "Damaged";
+	  ? "Open (" + to_string(request.distanceKm) + " km)"
+	  : "Damaged";
 
-    printDetail("Area",              request.areaName,                      FG_WHITE);
-    printDetail("Damage level",      levelToText(request.damageLevel),      levelColour(request.damageLevel, true));
-    printDetail("Families affected", to_string(request.familiesAffected),   FG_WHITE);
-    printDetail("Access route",      route,                                 request.routeOpen ? FG_GREEN : FG_RED);
-    printDetail("Water scarcity",    levelToText(request.waterScarcity),    levelColour(request.waterScarcity, true));
-    printDetail("Food availability", levelToText(request.foodAvailability), levelColour(request.foodAvailability, false));
-    printDetail("Injured people",    to_string(request.injuredPeople),      FG_WHITE);
-    printDetail("Previous aid",      yesNo(request.previousAid),            request.previousAid ? FG_GREEN : FG_YELLOW);
+    cardTop("REQUEST SUMMARY");
+    cardPair("Damage level", levelToText(request.damageLevel), levelColour(request.damageLevel, true),
+	  "Families affected", to_string(request.familiesAffected), FG_WHITE);
+    cardPair("Access route", route, request.routeOpen ? FG_GREEN : FG_RED,
+	  "Injured people", to_string(request.injuredPeople), FG_WHITE);
+    cardPair("Water scarcity", levelToText(request.waterScarcity), levelColour(request.waterScarcity, true),
+	  "Previous aid", yesNo(request.previousAid), request.previousAid ? FG_GREEN : FG_YELLOW);
+    cardPair("Food availability", levelToText(request.foodAvailability), levelColour(request.foodAvailability, false),
+	  "", "", "");
+    cardBottom();
 }
 
-// Coloured bar showing the score out of MAX_NEED_SCORE, e.g.  [######------]  12 / 17
-// Each point is two coloured spaces; unearned points are gray.
-void printScoreMeter(int score, Action recommended){
-    cout << setw(RES_MARGIN) << "" << left << setw(LABEL_W) << "Need score" << right << " ";
-    for (int point = 1; point <= MAX_NEED_SCORE; point++){
-        if (point <= score)
-            cout << actionBackground(recommended) << "  ";
-        else
-            cout << BG_GRAY << "  ";
+// "2 trucks, 50 packs, 100 water, 50 food, 25 medicine" - short version of what a package uses
+string shortCost(Action action) {
+    return countOf(PACKAGES[action].trucksNeeded, "truck") + ", "
+	  + countOf(PACKAGES[action].packsNeeded, "pack") + ", "
+	  + to_string(PACKAGES[action].waterBottlesNeeded) + " water, "
+	  + to_string(PACKAGES[action].foodPacketsNeeded) + " food, "
+	  + to_string(PACKAGES[action].medicineKitsNeeded) + " medicine";
+}
+
+// Text style for the package label (white on red, otherwise black)
+string badgeStyle(Action action) {
+    return actionBackground(action) + (action == FULL_RELIEF ? FG_WHITE : FG_BLACK) + BOLD;
+}
+
+void printNeedAssessment(int score, Action recommended) {
+    cardTop("NEED ASSESSMENT");
+    cardMeter("Need score", score, MAX_NEED_SCORE, actionBackground(recommended));
+    cardLabelled("Package", " " + upperCase(PACKAGES[recommended].name) + " ", badgeStyle(recommended));
+    if (recommended != DEFER)
+	  cardLabelled("Needs", shortCost(recommended), FG_GRAY);
+    cardBottom();
+}
+
+// One step of the progress line:  "● Requested"  or  "○ On the way"
+void addStage(string& line, int& visible, const string& name, bool reached, const string& colour) {
+    if (visible > 0) {
+	  line += FG_GRAY + " " + LINE_H + " " + RESET;
+	  visible += 3;
     }
-    cout << RESET << "  " << actionColour(recommended) << BOLD << score << RESET
-         << " / " << MAX_NEED_SCORE << "\n";
+    if (reached)
+	  line += colour + BOLD + DOT_FULL + " " + name + RESET;
+    else
+	  line += FG_GRAY + DOT_EMPTY + " " + name + RESET;
+    visible += 2 + (int)name.length();
 }
 
-// One line of the dispatch log:  [ OK ] text  or  [ NO ] text
-void printCheck(bool ok, string text){
-    cout << setw(RES_MARGIN) << "" << BOLD
-         << (ok ? BG_GREEN + FG_BLACK + " OK " : BG_RED + FG_WHITE + " NO ")
-          << "  " << text << RESET << "\n";
+// The progress line. The last two steps stay empty because this program does not track deliveries.
+void cardProgress(bool served) {
+    string line = "";
+    int visible = 0;
+    addStage(line, visible, "Requested", true, FG_GREEN);
+    addStage(line, visible, "Processed", true, FG_GREEN);
+    if (served)
+	  addStage(line, visible, "Dispatched", true, FG_GREEN);
+    else
+	  addStage(line, visible, "Deferred", true, FG_RED);
+    addStage(line, visible, "On the way", false, "");
+    addStage(line, visible, "Reached", false, "");
+    cardLine(line, visible);
 }
 
-// Header row of the stock table
-void printStockHeader(){
-    cout << setw(RES_MARGIN) << "" << BG_BLUE << FG_WHITE << BOLD
-         << "  " << left  << setw(STOCK_NAME_W) << "RESOURCE"
-         << right << setw(STOCK_NUM_W) << "BEFORE"
-         << setw(STOCK_NUM_W) << "USED"
-         << setw(STOCK_NUM_W) << "REMAINING" << "  "
-         << RESET << "\n";
+// One row of the stock table: name, before, used, left
+void stockRow(const string& name, int before, int left) {
+    cout << rowStart() << cell(name, 16, ALIGN_LEFT, FG_WHITE)
+	  << cell(to_string(before), 8, ALIGN_RIGHT, FG_WHITE)
+	  << cell(to_string(before - left), 8, ALIGN_RIGHT, FG_YELLOW)
+	  << cell(to_string(left), 8, ALIGN_RIGHT, (left == 0 ? FG_RED : FG_GREEN) + BOLD) << "\n";
 }
 
-// One row of the stock table; remaining stock turns red when it hits zero
-void printStockRow(string name, int before, int used, int remaining, bool shaded){
-    string rowBg = shaded ? BG_GRAY : BG_BLACK;
-    string remainingColour = (remaining == 0) ? FG_RED : FG_GREEN;
-
-    cout << setw(RES_MARGIN) << "" << rowBg << FG_WHITE
-         << "  " << left  << setw(STOCK_NAME_W) << name
-         << right << setw(STOCK_NUM_W) << before
-         << FG_YELLOW << setw(STOCK_NUM_W) << used
-         << remainingColour << BOLD << setw(STOCK_NUM_W) << remaining << "  "
-         << RESET << "\n";
+void printStockTable(int trucksBefore, int packsBefore, int waterBefore, int foodBefore, int medicineBefore) {
+    printRule('t', 16, 8, 8, 8);
+    cout << rowStart() << cell("RESOURCE", 16, ALIGN_LEFT, FG_CYAN + BOLD)
+	  << cell("BEFORE", 8, ALIGN_RIGHT, FG_CYAN + BOLD)
+	  << cell("USED", 8, ALIGN_RIGHT, FG_CYAN + BOLD)
+	  << cell("LEFT", 8, ALIGN_RIGHT, FG_CYAN + BOLD) << "\n";
+    printRule('m', 16, 8, 8, 8);
+    stockRow("Trucks", trucksBefore, trucks);
+    stockRow("Supply packs", packsBefore, packs);
+    stockRow("Water bottles", waterBefore, waterBottles);
+    stockRow("Food packets", foodBefore, foodPackets);
+    stockRow("Medicine kits", medicineBefore, medicineKits);
+    printRule('b', 16, 8, 8, 8);
 }
 
 // ======================= Help command ===========================
 
-void getHelp(){
+void getHelp() {
     HelpRequest request = takeInputs();
     saveRequest(request);
+
+    printHeading("REQUEST " + to_string(requestsServed + requestsDeferred + 1) + "  -  "
+	  + upperCase(shorten(request.areaName, 30)));
     printRequestSummary(request);
 
     // ---------- Need assessment ----------
     int needScore = calculateNeedScore(request);
     Action relief = (needScore >= 20) ? FULL_RELIEF :
-                    (needScore >= 12)  ? STANDARD_RELIEF :
-                    (needScore >= 8)  ? EMERGENCY_KIT :
-                                       DEFER;
+	  (needScore >= 12) ? STANDARD_RELIEF :
+	  (needScore >= 8) ? EMERGENCY_KIT :
+	  DEFER;
     Action recommended = relief;
-
-    printHeading("NEED ASSESSMENT");
-    printScoreMeter(needScore, recommended);
-    printDetail("Recommended package", PACKAGES[recommended].name, actionColour(recommended));
-    if (recommended != DEFER)
-        printDetail("Package needs", packageCost(recommended), FG_WHITE);
+    printNeedAssessment(needScore, recommended);
 
     // ---------- Dispatch ----------
-    printHeading("DISPATCH");
     int trucksBefore = trucks;
-    int packsBefore  = packs;
-    int waterBefore  = waterBottles;
-    int foodBefore   = foodPackets;
+    int packsBefore = packs;
+    int waterBefore = waterBottles;
+    int foodBefore = foodPackets;
     int medicineBefore = medicineKits;
 
-    // Try the recommended package; if stock is short, step down to the next smaller one
-    while (relief != DEFER && !canAfford(relief)){
-        printCheck(false, PACKAGES[relief].name + "  - not enough " + missingItems(relief));
-        relief = (relief == FULL_RELIEF)     ? STANDARD_RELIEF :
-                 (relief == STANDARD_RELIEF) ? EMERGENCY_KIT :
-                                               DEFER;
+    // Find what can really be sent: try the recommended package; if stock is short,
+    // step down to the next smaller one
+    while (relief != DEFER && !canAfford(relief)) {
+	  relief = (relief == FULL_RELIEF) ? STANDARD_RELIEF :
+		(relief == STANDARD_RELIEF) ? EMERGENCY_KIT :
+		DEFER;
     }
+
+    cardTop("DISPATCH STATUS");
+    cardProgress(relief != DEFER);
+    cardBlank();
+    if (recommended == DEFER)
+	  cardText("Score too low for a relief package.", FG_YELLOW);
+    for (int a = recommended; a < relief; a++)      // the packages we had to skip
+	  cardCheck(false, PACKAGES[a].name + "  - not enough " + missingItems((Action)a));
+    if (relief != DEFER)
+	  cardCheck(true, PACKAGES[relief].name + "  - sent");
+    cardBottom();
+
     dispatchPackage(relief);
     if (relief == DEFER) requestsDeferred++;
     else                 requestsServed++;
+    recordRequest(request.areaName, needScore, relief != DEFER, PACKAGES[relief].name);
 
-    if (relief != DEFER)
-        printCheck(true, PACKAGES[relief].name + "  - " + packageCost(relief) + " sent");
-
-    cout << "\n";
-    printStockHeader();
-    printStockRow("Trucks",       trucksBefore, trucksBefore - trucks, trucks, false);
-    printStockRow("Supply packs", packsBefore,  packsBefore  - packs,  packs,  true);
-    printStockRow("Water bottles", waterBefore, waterBefore - waterBottles, waterBottles, false);
-    printStockRow("Food packets",  foodBefore,  foodBefore  - foodPackets,  foodPackets,  true);
-    printStockRow("Medicine kits", medicineBefore, medicineBefore - medicineKits, medicineKits, false); 
+    printHeading("STOCK");
+    printStockTable(trucksBefore, packsBefore, waterBefore, foodBefore, medicineBefore);
 
     // ---------- Final result ----------
     cout << "\n";
-    if (relief == DEFER){
-        printBar("DEFERRED  /  MONITORING", BG_YELLOW + FG_BLACK + BOLD);
-        cout << "\n";
-        if (recommended == DEFER)
-            printText("Reason: the need score is too low for a relief package right now.");
-        else
-            printText("Reason: not enough stock left for any package.");
+    if (relief == DEFER) {
+	  printBar("DEFERRED  /  MONITORING", BG_YELLOW + FG_BLACK + BOLD);
+	  cout << "\n";
+	  if (recommended == DEFER)
+		printText("Reason: the need score is too low for a relief package right now.");
+	  else
+		printText("Reason: not enough stock left for any package.");
     }
-    else{
-        printBar("DISPATCHED:  " + PACKAGES[relief].name, BG_GREEN + FG_BLACK + BOLD);
-        if (relief != recommended){
-            cout << "\n";
-            printText("Note: downgraded from " + PACKAGES[recommended].name
-                      + " because stock was short.");
-        }
+    else {
+	  printBar("DISPATCHED:  " + PACKAGES[relief].name, BG_GREEN + FG_BLACK + BOLD);
+	  if (relief != recommended) {
+		cout << "\n";
+		printText("Note: downgraded from " + PACKAGES[recommended].name
+		    + " because stock was short.");
+	  }
     }
     cout << "\n";
+    printLowStockWarnings();
 }
 
 // ======================= Admin password =========================
@@ -419,13 +428,11 @@ const string ADMIN_PASSWORD = "admin@123";   // password
 const int MAX_PASSWORD_TRIES = 3;
 
 // Asks for the admin password. Returns true if it is correct.
-// User gets a few tries, if wrong every time then is locked out of this command.
+// User gets 3 tries, if wrong on each try then is locked out of this command.
 bool askAdminPassword() {
-    string attempt;
     for (int tries = 1; tries <= MAX_PASSWORD_TRIES; tries++) {
 	  cout << "    Admin password: ";
-	  getline(cin, attempt);
-	  if (attempt == ADMIN_PASSWORD)
+	  if (readPassword() == ADMIN_PASSWORD)
 		return true;
 	  printInputError("Wrong password (" + to_string(tries) + " of " + to_string(MAX_PASSWORD_TRIES) + ").");
     }
@@ -434,37 +441,89 @@ bool askAdminPassword() {
     return false;
 }
 
+// "1. Choose action:" - yellow number, cyan title
+void printQuestionTitle(int number, const string& title) {
+    cout << "    " << FG_YELLOW << BOLD << number << "." << RESET
+	  << " " << FG_CYAN << BOLD << title << RESET << "\n";
+}
+
+// Green box that confirms the change
+void printUpdated(const string& label, bool added, int amount, int previous, int total) {
+    string text = label + " updated successfully!";
+    string before = "Previous: ";
+    string middle = added ? "   |   Added: " : "   |   Removed: ";
+    string last = "   |   New total: ";
+    string n1 = to_string(previous), n2 = to_string(amount), n3 = to_string(total);
+
+    cardTop("UPDATED", 64, FG_GREEN, FG_GREEN + BOLD);
+    cardLine(BG_GREEN + FG_BLACK + BOLD + " OK " + RESET + "  " + FG_GREEN + BOLD + text + RESET,
+	  6 + (int)text.length());
+    cardLine(FG_GRAY + before + RESET + BOLD + FG_WHITE + n1 + RESET
+	  + FG_GRAY + middle + RESET + (added ? FG_GREEN : FG_YELLOW) + n2 + RESET
+	  + FG_GRAY + last + RESET + FG_GREEN + n3 + RESET,
+	  (int)(before.length() + n1.length() + middle.length() + n2.length()
+		+ last.length() + n3.length()));
+    cardBottom();
+}
+
 // Adds or removes stock by hand (donations, losses, corrections)
 void addStock() {
     cout << "\n";
-    if (!askAdminPassword())
-	  return;
+    if (!askAdminPassword()) return;
+
     cout << "\n";
-    printBar("Update Stock", BG_BLUE + FG_WHITE + BOLD);
-    cout << "\n";
-    printText("1. Trucks");
-    printText("2. Supply packs");
-    printText("3. Water bottles");
-    printText("4. Food packets");
-    printText("5. Medicine kits");
+    printBar("UPDATE STOCK", BG_BLUE + FG_WHITE + BOLD);
+    printBar("Add new supplies or remove used stock", BG_CYAN + FG_BLACK);
     cout << "\n";
 
-    int item = askNumber("Which item", 1, 5);
-    bool add = askTwoChoice("Add or remove", "add", "remove");
-    int amount = askNumber("How many", 1, 1000);
-    if (!add)
-	  amount = -amount;
+    printQuestionTitle(1, "Choose action:");
+    printText("    1. Add stock");
+    printText("    2. Remove stock");
+    bool add = (askNumber("  Enter choice", 1, 2) == 1);
 
-    int* stock = (item == 1) ? &trucks :
-	  (item == 2) ? &packs :
-	  (item == 3) ? &waterBottles :
-	  (item == 4) ? &foodPackets :
-	  &medicineKits;
+    cout << "\n";
+    printQuestionTitle(2, "Select resource:");
+    printText("     1. Trucks");
+    printText("     2. Supply packs");
+    printText("     3. Water bottles");
+    printText("     4. Food packets");
+    printText("     5. Medicine kits");
+    int item = askNumber("  Enter choice", 1, 5);
 
-    if (*stock + amount < 0) {
-	  printInputError("Cannot remove more than you have (" + to_string(*stock) + " in stock).");
+    cout << "\n";
+    printQuestionTitle(3, "Enter quantity:");
+    int amount = askNumber(" Quantity", 1, 1000);
+
+    int* stock = (item == 1) ? &trucks : (item == 2) ? &packs : (item == 3) ? &waterBottles : (item == 4) ? &foodPackets : &medicineKits;
+    string label = (item == 1) ? "Trucks" : (item == 2) ? "Supply packs" : (item == 3) ? "Water bottles" : (item == 4) ? "Food packets" : "Medicine kits";
+
+    int previous = *stock;
+    if (!add && amount > previous) {
+	  printInputError("Cannot remove more than you have (" + to_string(previous) + ")");
 	  return;
     }
-    *stock += amount;
-    showInventory();
+    *stock += add ? amount : -amount;
+
+    cout << "\n";
+    printUpdated(label, add, amount, previous, *stock);
+    waitForEnter();
+}
+
+bool confirmExit() {
+    printHeading("EXIT PROGRAM"); // Header Banner
+
+    while (true) { // Keeps looping till the user gives an affirmation
+	  cout << "    Are you sure you want to exit? (y/n): ";
+	  string answer;
+	  getline(cin, answer);
+	  answer = cleanInput(answer); // Cleans up spaces and makes the letters lowercased
+
+	  if (answer == "y" || answer == "yes")
+		return true; // Close the program
+
+	  if (answer == "n" || answer == "no")
+		return false; // Stay in the program
+
+	  printInputError("Please type 'y' or 'n'."); // Catches invalid answers/inputs
+    }
 }
