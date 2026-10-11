@@ -1,4 +1,5 @@
 #include "./../include/output.h"
+#include "./../include/engine.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -14,7 +15,7 @@ using namespace std;
 // ======================= Display settings =======================
 int WIDTH = 64;          // updated to the terminal width at runtime
 const int MARGIN = 4;    // left/right indent for inner content
-const int CMD_W  = 13;   // width of the command "badge" column
+const int CMD_W  = 16;   // width of the command "badge" column (fits "show_inventory")
 
 // ======================= ANSI escape codes ======================
 const string RESET     = "\033[0m";
@@ -153,17 +154,17 @@ void printInstructions(){
 
     // ---------- Introduction ----------
     printHeading("INTRODUCTION");
-    printText("During a disaster, relief supplies such as food, water,");
-    printText("medicine and shelter kits are limited, and many areas");
-    printText("need them at once. This program keeps track of the");
-    printText("available stock and distributes it to affected areas.");
+    printText("After a disaster such as a flood, trucks and relief");
+    printText("supplies are limited, and many areas ask for help at");
+    printText("once. This program decides how much relief each area");
+    printText("should get, without running out of stock too quickly.");
     cout << "\n";
-    printText(BOLD + string("With this system you can:") + RESET);
-    printBullet("Request relief supplies for an area");
-    printBullet("View the supplies currently in stock");
-    printBullet("Add new supplies when donations arrive");
-    printBullet("Check the overall distribution status");
-    printBullet("history / requests : View relief request history summary");
+    printText(BOLD + string("For every request the system:") + RESET);
+    printBullet("Asks a few questions about the affected area");
+    printBullet("Calculates a need score from the answers");
+    printBullet("Picks a relief package that matches the need");
+    printBullet("Sends a smaller package if stock is too low");
+    printBullet("Updates the stock and saves the request");
 
     // ---------- Commands ----------
     printHeading("COMMANDS");
