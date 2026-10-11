@@ -14,4 +14,5 @@ extern int requestsDeferred;
 void showStatus();
 void recordRequest(const std::string & area, int score, bool served, const std::string & package);
 void showInventory();
+void showSummaryStats();
 void printLowStockWarnings();     // prints nothing if no item is low
