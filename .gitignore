@@ -1,3 +1,4 @@
 *.exe
 *.o
 main_expanded.cpp*
+.vscode

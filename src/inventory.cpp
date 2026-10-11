@@ -10,6 +10,8 @@ int packs = 120;
 int waterBottles = 500;
 int foodPackets = 300;
 int medicineKits = 200;
+int requestsServed = 0;
+int requestsDeferred = 0;
 
 // ======================= Table layout ===========================
 const int INV_MARGIN = 4;    // left indent of the table
@@ -47,5 +49,18 @@ void showInventory(){
     printInventoryRow("Water bottles",  waterBottles,    false);
     printInventoryRow("Food packets",   foodPackets,    true);
     printInventoryRow("Medicine kits",  medicineKits,    false);
+    cout << "\n";
+}
+
+// ======================= Status screen ==========================
+
+void showStatus() {
+    cout << "\n\n";
+    printBar("Distribution Status", BG_BLUE + FG_WHITE + BOLD);
+    cout << "\n";
+
+    printInventoryHeader();
+    printInventoryRow("Requests served", requestsServed, false);
+    printInventoryRow("Requests deferred", requestsDeferred, true);
     cout << "\n";
 }

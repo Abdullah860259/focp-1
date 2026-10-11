@@ -169,43 +169,35 @@ void printInstructions(){
     // ---------- Commands ----------
     printHeading("COMMANDS");
     printTableHeader();
-    printCommand("get_help",       "Request relief for an area",    false);
-    printCommand("show_inventory", "Show current stock levels",     true);
-    printCommand("instructions",   "Show this instructions screen", false);
-    printCommand("exit",           "Exit the program",              true);
-
-    // ---------- Relief packages ----------
-    // Names come straight from the PACKAGES table, so they always match the code
-    printHeading("RELIEF PACKAGES");
-    printText("From largest to smallest:");
-    for (int i = 0; i < PACKAGE_COUNT; i++)
-        printBullet(PACKAGES[i].name);
+    printCommand("help",         "Request relief supplies for an area", false);
+    printCommand("resources",    "Print all supplies and quantities",   true);
+    printCommand("update",       "Manage stock - add or remove stocks (admin only)",       false);
+    printCommand("status",       "Show summary of distributions",       true);
+    printCommand("instructions", "Show this instructions screen",       false);
+    printCommand("exit",         "Exit the program",                    true);
 
     // ---------- How to use ----------
     printHeading("HOW TO USE");
     printStep(1, "Type a command and press Enter.");
-    printStep(2, "Capital letters and spaces are ignored.");
-    printStep(3, "For get_help, answer each question.");
-    printStep(4, "Numbers must be whole and inside the range shown.");
-    printStep(5, "A wrong answer is simply asked again.");
+    printStep(2, "Answer the questions about the affected area (area, damage level, etc)");
+    printStep(3, "Quantities must be either zero or positive integers.");
+    printStep(4, "You cannot request more than what is in stock.");
 
     // ---------- Example ----------
     printHeading("EXAMPLE");
-    printTerminalLine("",                                         FG_GREEN);
-    printTerminalLine("> get_help",                               FG_GREEN + BOLD);
-    printTerminalLine("  Area name: Riverside Village",           FG_WHITE);
-    printTerminalLine("  Damage level (low/medium/high): high",   FG_WHITE);
-    printTerminalLine("  Families affected (10-200): 150",        FG_WHITE);
-    printTerminalLine("  Access route (open/damaged): damaged",   FG_WHITE);
-    printTerminalLine("  Water scarcity (low/medium/high): high", FG_WHITE);
+    printTerminalLine("",                                           FG_GREEN);
+     printTerminalLine("Enter a command: help",                     FG_GREEN + BOLD);
+    printTerminalLine("  Area name : Muzaffarabad",                 FG_WHITE);
+    printTerminalLine("  Damage level (low/medium/high) : high",    FG_WHITE);
+    printTerminalLine("  Families affected (10-200) : 150",         FG_WHITE);
+    printTerminalLine("  Access route (open/damaged): open",        FG_WHITE);
+    printTerminalLine("  Distance to the area in km (1-500): 80",   FG_WHITE);
+    printTerminalLine("  Water scarcity (low/medium/high): high",   FG_WHITE);
     printTerminalLine("  Food availability (low/medium/high): low", FG_WHITE);
-    printTerminalLine("  Number of injured people (0-1000): 40",  FG_WHITE);
-    printTerminalLine("  Previous aid received (yes/no): no",     FG_WHITE);
-    printTerminalLine("",                                         FG_GREEN);
-    printTerminalLine("  Need score: 23 / 25",                    FG_YELLOW + BOLD);
-    printTerminalLine("  DISPATCHED: A. Full Relief",             FG_YELLOW + BOLD);
-    printTerminalLine("",                                         FG_GREEN);
-
+    printTerminalLine("  Number of injured people (0-1000): 120",   FG_WHITE);
+    printTerminalLine("  Previous aid received (yes/no): no",       FG_WHITE);
+    printTerminalLine("  DISPATCHED: A. Full Relief",               FG_YELLOW + BOLD);
+    printTerminalLine("",                                           FG_GREEN);
     // ---------- Footer ----------
     cout << "\n";
     printBar("Type 'instructions' at any time to see this screen again.",

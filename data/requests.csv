@@ -15,3 +15,6 @@ Time,Area,Damage Level,Families Affected,Route,Distance (km),Water Scarcity,Food
 2026-10-05 22:44:02,"de",High,199,Damaged,0,High,Low,299,No
 2026-10-05 22:56:28,"ade",High,99,Damaged,0,Low,High,4,Yes
 2026-10-05 23:01:08,"ade",High,100,Damaged,0,High,High,999,Yes
+2026-10-06 18:16:23,"ar",Low,20,Damaged,0,High,High,999,Yes
+2026-10-06 21:24:47,"lahore",High,29,Damaged,0,Low,Low,999,Yes
+2026-10-07 18:03:34,"fyfyuh",High,99,Open,88,High,High,999,No
