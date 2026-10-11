@@ -99,3 +99,10 @@ void saveRequest(const HelpRequest &request){
     cout << "\n    " << FG_GREEN << BOLD << "Request saved to " << REQUESTS_FILE
          << RESET << "\n";
 }
+void showRequestHistorySummary() {
+    cout << "\n\n";
+    printBar("Relief Request Statistics", BG_BLUE + FG_WHITE + BOLD);
+    cout << "\n";
+    printBullet("Total Requests Processed: Saved to " + REQUESTS_FILE);
+    cout << "\n";
+}
