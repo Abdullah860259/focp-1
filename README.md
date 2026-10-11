@@ -13,7 +13,7 @@ Built for **CS 110: Fundamentals of Computer Programming, Assignment 1** (NUST S
 | Name | Contribution |
 |---|---|
 | Abdullah Anwar | _TODO: e.g. program structure, input engine, dispatch logic_ |
-| Hooriya | _TODO_ |
+| Hooria | _TODO_ |
 | Abeera | _TODO_ |
 
 > **TODO:** Fill in who did what. The rubric checks that this matches the commit history, and each member must be able to explain the whole program in the viva.
