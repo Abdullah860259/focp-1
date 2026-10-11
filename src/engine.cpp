@@ -173,19 +173,19 @@ int calculateNeedScore(const HelpRequest& request) {
     else
 	  score += 1;
 
-    // Route status: maximum 2 points
+    // Route status: maximum 3 points
     if (!request.routeOpen)
-	  score += 2;
+	  score += 3;
     else if (request.distanceKm > 100)
-	  score += 1;
+	  score += 2;
     else
-	  score += 0;
+	  score += 1;
 
     // Water scarcity
     score += (int)request.waterScarcity * 2;
 
     // Food availability
-    score += (int)(2 - request.foodAvailability) * 2;
+    score += (3 - (int)request.foodAvailability);
 
     // Injured people: maximum 4 points
     if (request.injuredPeople == 0)
